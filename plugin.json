@@ -1,0 +1,11 @@
+{
+  "name": "Terrain from Image",
+  "id": "terrain-from-image",
+  "version": "1.0.0",
+  "description": "Paint a picture onto the map: choose a file, paste, drop or link one, tune its colours, give each terrain a key colour, and every cell becomes the nearest terrain — isometrically (cliffs and shores generated) or as flat tiles.",
+  "author": "Jeany",
+  "homepage": "https://github.com/scm-js/plugin-image-to-terrain",
+  "entry": "plugin.ts",
+  "icon": "icon.svg",
+  "api": 2
+}
