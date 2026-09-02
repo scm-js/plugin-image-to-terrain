@@ -1,5 +1,7 @@
 # Terrain from Image
 
+![Terrain from Image — paint a picture onto the map](.github/social-preview.png)
+
 A plugin for [scmJS](https://github.com/jeany55/scm-js), the browser-based StarCraft 1 /
 Brood War map editor: it paints a picture onto the map.
 
@@ -43,6 +45,7 @@ Settings and the per-tileset key colours are remembered between sessions.
 | `convert.ts` | the pure part — colour adjustment, OKLab matching, majority filter, region cleanup, fit |
 | `plugin-api/` | the editor's emitted type declarations, vendored so this repository type-checks alone |
 | `tests/` | vitest over `convert.ts` |
+| `.github/` | the repository's social preview card and the scm-js organisation avatar (both uploaded by hand — GitHub has no API for either) |
 
 `plugin-api/` is generated in the editor's repository by `npm run build:plugin-types`; refresh it
 from there when the plugin API version moves.
