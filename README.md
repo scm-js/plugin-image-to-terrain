@@ -1,7 +1,5 @@
 # Terrain from Image
 
-![Terrain from Image — paint a picture onto the map](.github/social-preview.png)
-
 A plugin for [scmJS](https://github.com/jeany55/scm-js), the browser-based StarCraft 1 /
 Brood War map editor: it paints a picture onto the map.
 
