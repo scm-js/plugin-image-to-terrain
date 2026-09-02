@@ -112,4 +112,10 @@ export declare const techSettingsSections: (scn: Scenario) => string[];
 /** PTEC and/or PTEx. */
 export declare const techRestrictionSections: (scn: Scenario) => string[];
 export declare function parseScenario(bytes: Uint8Array): Scenario;
+/**
+ * The sections `encodeSection` produces from the model. Everything else in a file is
+ * carried as bytes and written back unchanged; a raw edit to one of these is only seen
+ * by the editor once the file is parsed again (`editor/sections.ts`).
+ */
+export declare const MODELLED_SECTIONS: ReadonlySet<string>;
 export declare function serializeScenario(scn: Scenario): Uint8Array;
