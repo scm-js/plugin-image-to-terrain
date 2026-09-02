@@ -23,7 +23,8 @@ import type { UnitGroup } from "../data/units";
 import type { SpriteGroup } from "../data/sprites";
 import type { EditorLayer, TerrainMode } from "../atoms/editorAtoms";
 import type { DialogId } from "../atoms/uiAtoms";
-export type { Scenario, UnitRecord, SpriteRecord, DoodadRecord, LocationRecord, LoadedTileset, TerrainType, TileInfo, TilesetId, Rect, Diamond, Bounds, LocationPatch, FogMode, SpriteKind, UnitGroup, SpriteGroup, EditorLayer, TerrainMode, DialogId };
+import type { MapImageOptions } from "../services/mapImage";
+export type { Scenario, UnitRecord, SpriteRecord, DoodadRecord, LocationRecord, LoadedTileset, TerrainType, TileInfo, TilesetId, Rect, Diamond, Bounds, LocationPatch, FogMode, SpriteKind, UnitGroup, SpriteGroup, EditorLayer, TerrainMode, DialogId, MapImageOptions };
 /**
  * The version a host provides; a manifest that asks for a newer one is refused. It stays
  * at 1 while the API is only used by the plugins in the scm-js organisation and grows
@@ -123,6 +124,26 @@ export interface EditResult {
     fog: number;
     notes: string[];
 }
+export type MapFileFormat = "scx" | "scm" | "chk";
+export interface ExportOptions {
+    /** The container: `scx` (default) or `scm` archives, `chk` the bare scenario. */
+    format?: MapFileFormat;
+    /** The file's name; defaults to the open file's, or the scenario name plus the format. */
+    fileName?: string;
+}
+/**
+ * The files stored in the map archive next to `staredit\scenario.chk`: custom sounds,
+ * graphics, and anything a plugin wants to keep with the map. Names are archive paths
+ * with backslashes (`staredit\wav\hello.wav`). They are written on Save.
+ */
+export interface ExtrasApi {
+    list(): string[];
+    get(name: string): Uint8Array | null;
+    /** Add or replace a member; marks the map modified. */
+    set(name: string, bytes: Uint8Array): void;
+    /** Remove a member; true when there was one. */
+    remove(name: string): boolean;
+}
 export interface DocumentApi {
     isOpen(): boolean;
     info(): DocumentInfo | null;
@@ -139,6 +160,27 @@ export interface DocumentApi {
     edit(label: string, build: (tx: EditTransaction) => void): EditResult;
     undo(): string | null;
     redo(): string | null;
+    /**
+     * Open a map file (`.scx` / `.scm` / `.chk`) in place of the current one, the way
+     * File ▸ Open does: when the open map has unsaved changes and Preferences say to ask,
+     * the Close Scenario dialog comes first and the user may cancel. Resolves true once
+     * the file is the open document, false when the user kept the current map or the
+     * file could not be read (the status bar says why).
+     */
+    open(file: File | Blob | Uint8Array, fileName?: string): Promise<boolean>;
+    /**
+     * The open map as a file, exactly as Save would write it — archive extras included.
+     * Null when no map is open.
+     */
+    export(options?: ExportOptions): Promise<File | null>;
+    /**
+     * A picture of the map as File ▸ Export ▸ Image draws it, as a PNG. `pixelsPerTile`
+     * is the one dial (32 is the game's art 1:1, 1 is a minimap); the other options
+     * default as the dialog's do. Needs the tileset graphics — without them, or without
+     * a map, null.
+     */
+    renderImage(options?: Partial<MapImageOptions>): Promise<Blob | null>;
+    readonly extras: ExtrasApi;
 }
 /** Cells for the bulk terrain operations: a tile rect, or cell indices (`y * width + x`). */
 export type Cells = Rect | Iterable<number>;
@@ -498,6 +540,18 @@ export interface MenuItemSpec {
     label: string;
     /** Display only — bind the key with `hotkeys.add`. */
     shortcut?: string;
+    /**
+     * A mark in front of the label: `"plugin"` for the plugin's own icon (the manifest's),
+     * or any `PluginIcon`. Use it when the item does something a built-in never would —
+     * reach a network, say — so the user can tell at a glance.
+     */
+    icon?: "plugin" | PluginIcon;
+    /**
+     * Where in the menu: the label of the built-in item or submenu to sit directly under
+     * (`"Open Recent"`). Without it, or when nothing has that label, the item goes to the
+     * end of the menu after a separator.
+     */
+    after?: string;
     enabled?: () => boolean;
     run: () => void;
 }
