@@ -82,6 +82,7 @@ const STYLE = `
 .tfi .tfi-terrain input[type=color].custom { outline: 1px solid var(--gold, #e6b95c); outline-offset: 1px; }
 .tfi .tfi-terrain .tfi-eye { width: 22px; height: 18px; padding: 0; font-size: 12px; line-height: 1; }
 .tfi .tfi-terrain .tfi-eye.armed { background: var(--teal-dim, #2c8a83); color: #fff; }
+.tfi .tfi-swatch { display: inline-block; width: 14px; height: 14px; margin-right: 5px; vertical-align: -3px; border: 1px solid rgba(0,0,0,.6); border-radius: 2px; image-rendering: pixelated; }
 .tfi .tfi-terrain .tfi-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tfi .tfi-terrain .tfi-count { text-align: right; color: var(--text-faint, #6b7382); font-variant-numeric: tabular-nums; }
 .tfi .tfi-summary { color: var(--text-dim, #99a2b3); min-height: 16px; }
@@ -495,8 +496,7 @@ function openDialog(api: PluginApi, session: Session) {
           const eye = h("button", { className: `btn sm tfi-eye ${s.dropper === t.id ? "armed" : ""}`, type: "button", title: `Eyedropper: click a spot on the source preview to make it ${t.name}'s key colour`, "aria-label": `Pick key colour for ${t.name} from the picture`, onClick: () => { s.dropper = s.dropper === t.id ? null : t.id; rebuildTerrainList(); sourceBox.classList.toggle("dropper", s.dropper !== null); } }, "⌖");
           const count = h("span", { className: "tfi-count" });
           counts.set(t.id, count);
-          const swatch = api.terrain.terrainColor(t.id);
-          const row = h("div", { className: `tfi-terrain ${s.chosen.has(t.id) ? "" : "off"}` }, on, key, eye, h("span", { className: "tfi-name", title: `${t.name} — height ${t.height}${t.buildable ? ", buildable" : ""}` }, h("span", { style: `display:inline-block;width:9px;height:9px;margin-right:5px;vertical-align:-1px;background:${swatch === null ? "#000" : toHex(swatch)};border:1px solid rgba(0,0,0,.6)` }), t.name), count);
+          const row = h("div", { className: `tfi-terrain ${s.chosen.has(t.id) ? "" : "off"}` }, on, key, eye, h("span", { className: "tfi-name", title: `${t.name} — height ${t.height}${t.buildable ? ", buildable" : ""}` }, terrainSwatch(api, t), t.name), count);
           terrainList.append(row);
         }
         sourceBox.classList.toggle("dropper", s.dropper !== null);
@@ -614,6 +614,22 @@ function openDialog(api: PluginApi, session: Session) {
   };
 }
 
+/**
+ * The little square in front of a terrain's name. `api.graphics.tileImage` hands back the
+ * megatile the atlas already holds, so the row shows the terrain's actual art rather than
+ * its mean colour; without the graphics there is no atlas, and the mean colour (or black)
+ * is all there is.
+ */
+function terrainSwatch(api: PluginApi, t: TerrainType): HTMLElement {
+  const picture = api.graphics.tileImage(t.group << 4);
+  if (picture) {
+    picture.image.className = "tfi-swatch";
+    return picture.image;
+  }
+  const mean = api.terrain.terrainColor(t.id);
+  return h("span", { className: "tfi-swatch", style: `background:${mean === null ? "#000" : toHex(mean)}` });
+}
+
 /* ── Activation ─────────────────────────────────────────── */
 
 export default function activate(api: PluginApi) {
@@ -629,10 +645,14 @@ export default function activate(api: PluginApi) {
   const label = (ctx: ContextMenuContext) => (ctx.markedArea ? "Terrain from Image into Marked Area…" : "Terrain from Image…");
   const enabled = () => api.document.isOpen();
 
-  api.menu.add("File/Import", { label: "Terrain from Image…", enabled, run: () => open(api.selection.markedArea()) });
+  // Named actions: the menu item, both context entries and anyone else run the same two.
+  api.commands.register({ id: "open", title: "Terrain from Image…", enabled, run: () => open(api.selection.markedArea()) });
+  api.commands.register({ id: "pick", title: "Terrain from Image into Area…", enabled, run: () => { void pickThenOpen(api.selection.markedArea()); } });
+
+  api.menu.add("File/Import", { label: "Terrain from Image…", enabled, command: "open" });
   for (const surface of ["terrainPalette", "viewport"] as const) {
     const visible = surface === "viewport" ? (ctx: ContextMenuContext) => ctx.layer === "terrain" || ctx.layer === "clipboard" : undefined;
     api.contextMenu.add(surface, { label, visible, enabled, run: (ctx) => open(ctx.markedArea) });
-    api.contextMenu.add(surface, { label: "Terrain from Image into Area…", visible, enabled, run: (ctx) => { void pickThenOpen(ctx.markedArea); } });
+    api.contextMenu.add(surface, { label: "Terrain from Image into Area…", visible, enabled, command: "pick" });
   }
 }

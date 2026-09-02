@@ -1,6 +1,7 @@
 import { type Scenario } from "../formats/chk/scenario";
 import { type LoadedTileset } from "../formats/tileset/load";
 import { type UnitAssets } from "../formats/units/load";
+import type { Rect } from "../editor/terrain";
 /** The scales the export offers, largest first. */
 export declare const IMAGE_SCALES: readonly [32, 16, 8, 4, 2, 1];
 export interface MapImageOptions {
@@ -16,6 +17,13 @@ export interface MapImageOptions {
     fogPlayer: number;
     /** Grid spacing in map pixels (32 = one tile); 0 for no grid. */
     grid: number;
+    /**
+     * The part of the map to draw, in tiles (exclusive `x1` / `y1`). The whole map when
+     * absent. Everything is drawn in map coordinates and the canvas is translated, so a
+     * region looks exactly like that part of the full picture — a unit half outside the
+     * region still leans in.
+     */
+    rect?: Rect | null;
 }
 export declare const DEFAULT_IMAGE_OPTIONS: MapImageOptions;
 /** True when this scale draws unit and sprite graphics rather than minimap dots. */
@@ -25,6 +33,8 @@ export interface MapImageAssets {
     tileset: LoadedTileset | null;
     units: UnitAssets | null;
 }
+/** The tiles an export covers: its `rect` clamped to the map, or the whole map. */
+export declare function imageArea(scn: Scenario, options: MapImageOptions): Rect;
 export declare function imageSize(scn: Scenario, options: MapImageOptions): {
     width: number;
     height: number;

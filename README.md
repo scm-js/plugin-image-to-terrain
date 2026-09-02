@@ -34,7 +34,9 @@ To pin a version, add a ref: `github:scm-js/plugin-image-to-terrain@v1.0.0`.
 - **Terrain from Image into Area…** — in the map's and the terrain palette's context menus;
   drag the target rectangle on the map first, then the dialog opens with it selected.
 
-Settings and the per-tileset key colours are remembered between sessions.
+Each terrain in the list is shown with its own tile art, so what you are matching against
+is what the map will look like. Settings and the per-tileset key colours are remembered
+between sessions.
 
 ## Layout
 
