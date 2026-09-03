@@ -59,6 +59,12 @@ export declare const CHOICES: Partial<Record<ArgKind, Choice[]>>;
 export declare function choiceLabel(kind: ArgKind, value: number): string | undefined;
 export declare function choiceValue(kind: ArgKind, text: string): number | undefined;
 /** Encode a four-character script code the way the action stores it (little-endian u32). */
+/**
+ * Where the deaths table starts in StarCraft 1.16.1's memory: `EPD(address)` is the player
+ * value that reaches `address` through a Deaths condition or Set Deaths action (the
+ * Classic editor's EPD box, and the trigger script's `Memory` / `SetMemory`).
+ */
+export declare const DEATHS_TABLE_ADDRESS = 5808996;
 export declare function aiScriptCode(id: string): number;
 export declare function aiScriptId(code: number): string;
 /** The scripts StarEdit offers, by code. Campaign scripts print as their code. */

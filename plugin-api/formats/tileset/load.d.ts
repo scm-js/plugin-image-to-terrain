@@ -32,6 +32,15 @@ export declare function onTilesetProgress(listener: (p: TilesetProgress) => void
 export declare function getTileset(name: TilesetFileName): Promise<LoadedTileset>;
 export declare function peekTileset(name: TilesetFileName): LoadedTileset | null;
 export declare function ensureTileset(name: TilesetFileName): Promise<LoadedTileset>;
+/**
+ * Forget a decoded tileset. Every reader asks for the *document's* tileset
+ * (`tilesetFileNameAtom`), so once a map changes era the one it left is only memory — the
+ * raw files plus a ~20 MB atlas canvas — and `useTileset` releases it on the transition.
+ * A load still in flight is left alone (it belongs to whoever asked); a released tileset
+ * is simply fetched and rasterised again the next time a map needs it. Returns whether
+ * there was anything to drop.
+ */
+export declare function releaseTileset(name: TilesetFileName): boolean;
 /** After the game data source changes: the shared names file may now be there, so ask again next time. */
 export declare function retryTilesetParts(): void;
 /** Install an already-decoded tileset as if it had been fetched (tests, or a loader that read the files itself). */
