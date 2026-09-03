@@ -3,6 +3,7 @@ import { type StringTable } from "./sections/strings";
 import { type DoodadRecord, type LocationRecord, type SpriteRecord, type UnitRecord } from "./sections/objects";
 import { type Forces, type PlayerRgb } from "./sections/players";
 import { type TechRestrictions, type TechSettings, type UnitAvailability, type UnitSettings, type UpgradeRestrictions, type UpgradeSettings } from "./sections/settings";
+import { type CuwpSlot } from "./sections/cuwp";
 import { type TriggerRecord } from "./sections/triggers";
 /**
  * A parsed scenario.
@@ -28,6 +29,13 @@ export interface Scenario {
     nameIndex: number;
     descriptionIndex: number;
     playerTypes: number[];
+    /**
+     * IOWN: StarEdit's own copy of the player types — what its Player Settings dialog
+     * shows, where the game reads OWNR. The editor keeps the two in step; a file where they
+     * differ (another tool wrote one and not the other) is flagged by Check Map. Null when
+     * the file has no section.
+     */
+    editorPlayerTypes: number[] | null;
     playerRaces: number[];
     playerColors: number[];
     /** CRGB, Remastered's per-slot colour choice; null when the file has none (every client then reads COLR). */
@@ -47,6 +55,10 @@ export interface Scenario {
     techRestrictions: TechRestrictions | null;
     /** WAV: 512 string indices of the map's sound paths; null when the file has no section. */
     wavs: number[] | null;
+    /** UPRP: the 64 Create Unit with Properties slots (the action names one 1-based); null when the file has no section. */
+    cuwp: CuwpSlot[] | null;
+    /** UPUS: StarEdit's "slot in use" byte per CUWP slot; null when the file has no section. */
+    cuwpUsed: boolean[] | null;
     /** MTXM: what the game draws — terrain with the doodads stamped over it. */
     tiles: Uint16Array;
     /**

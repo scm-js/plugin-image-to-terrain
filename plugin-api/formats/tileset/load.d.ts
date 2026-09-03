@@ -32,5 +32,7 @@ export declare function onTilesetProgress(listener: (p: TilesetProgress) => void
 export declare function getTileset(name: TilesetFileName): Promise<LoadedTileset>;
 export declare function peekTileset(name: TilesetFileName): LoadedTileset | null;
 export declare function ensureTileset(name: TilesetFileName): Promise<LoadedTileset>;
+/** After the game data source changes: the shared names file may now be there, so ask again next time. */
+export declare function retryTilesetParts(): void;
 /** Install an already-decoded tileset as if it had been fetched (tests, or a loader that read the files itself). */
 export declare function primeTileset(loaded: LoadedTileset): void;

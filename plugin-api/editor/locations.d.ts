@@ -123,8 +123,6 @@ export declare function addLocation(scn: Scenario, bounds: Bounds, name?: string
  * inverted box keeps its inversion: all four edges move together.
  */
 export declare function moveLocations(scn: Scenario, indices: number[], dx: number, dy: number): LocationChange[];
-/** Give a location new bounds (normalised and clamped); a zero-area box or no change yields nothing. */
-export declare function resizeLocation(scn: Scenario, index: number, bounds: Bounds): LocationChange[];
 export interface LocationPatch {
     name?: string;
     left?: number;

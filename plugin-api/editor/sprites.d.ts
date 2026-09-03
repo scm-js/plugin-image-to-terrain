@@ -93,5 +93,3 @@ export declare function removeSprites(scn: Scenario, indices: number[]): SpriteC
 export declare function updateSprites(scn: Scenario, indices: number[], patch: (r: SpriteRecord) => Partial<SpriteRecord>): SpriteChange[];
 /** Shift sprites by a pixel delta, clamped to the map. */
 export declare function moveSprites(scn: Scenario, indices: number[], dx: number, dy: number): SpriteChange[];
-/** Set or clear one `SpriteFlag` bit on the sprites at `indices`. */
-export declare function setSpriteFlag(scn: Scenario, indices: number[], bit: number, on: boolean): SpriteChange[];

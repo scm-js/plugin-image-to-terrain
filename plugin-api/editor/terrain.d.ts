@@ -36,7 +36,6 @@ export interface Rect {
 export declare function brushRect(x: number, y: number, size: number, width: number, height: number): Rect;
 /** Write one tile id over a set of tiles. */
 export declare function stampTile(scn: Scenario, indices: Iterable<number>, id: number): TileChange[];
-export declare function stampTileAt(scn: Scenario, x: number, y: number, size: number, id: number): TileChange[];
 export interface FlatBrush {
     /** Even CV5 group of the terrain's flat pair. */
     group: number;
@@ -50,7 +49,30 @@ export interface FlatBrush {
  * ground StarEdit laid down itself.
  */
 export declare function stampTerrain(scn: Scenario, tileset: Tileset, brush: FlatBrush, indices: Iterable<number>, random?: () => number): TileChange[];
-export declare function stampTerrainAt(scn: Scenario, tileset: Tileset, brush: FlatBrush, x: number, y: number, size: number, random?: () => number): TileChange[];
+/** What Replace Terrain matches or writes: a flat terrain type (by ISOM id) or one exact tile. */
+export type TerrainPick = {
+    kind: "terrain";
+    id: number;
+    variation?: number;
+} | {
+    kind: "tile";
+    id: number;
+};
+/**
+ * The tiles Replace Terrain would touch: every cell (in `rect`, else the whole map) whose
+ * tile is `from` — an exact id, or any tile of the flat pair carrying the terrain's ISOM
+ * id, read off the CV5 group index as the Rect fill does. A terrain match needs the
+ * tileset graphics; without them it is empty.
+ */
+export declare function matchingTiles(scn: Scenario, tileset: Tileset | null, from: TerrainPick, rect?: Rect): number[];
+/**
+ * Tools ▸ Replace Terrain: every tile matching `from` becomes `to` — flat pairs laid the
+ * way the Rect brush lays them (so a terrain-to-terrain swap keeps StarEdit's left/right
+ * pairing), or one exact tile everywhere. ISOM is left alone, as by the Rect brush.
+ */
+export declare function replaceTerrain(scn: Scenario, tileset: Tileset | null, from: TerrainPick, to: TerrainPick, rect?: Rect, random?: () => number): TileChange[];
+/** The even CV5 group of the flat pair carrying an ISOM terrain id, or -1. */
+export declare function flatGroupOf(tileset: Tileset, terrainId: number): number;
 /**
  * The 4-connected region around (x, y) whose tiles all satisfy `same`, as flat
  * indices. Capped so a runaway predicate on a 256x256 map still returns.

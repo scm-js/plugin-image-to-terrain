@@ -1,6 +1,6 @@
 {
   "name": "scmjs-plugin-image-to-terrain",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Terrain from Image — a plugin for the scmJS StarCraft map editor.",
   "author": "Jeany",

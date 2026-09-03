@@ -67,8 +67,6 @@ export declare const DDDATA_SIZE: number;
 export declare function buildDoodadCatalogue(tileset: Tileset, dddata: Uint8Array | null, names: readonly string[] | null): DoodadCatalogue;
 /** An empty catalogue, for when the tileset graphics are missing. */
 export declare const NO_DOODADS: DoodadCatalogue;
-/** The doodad a CV5 group belongs to, or null for terrain groups. */
-export declare function doodadOfGroup(catalogue: DoodadCatalogue, group: number): DoodadDef | null;
 /** Row-major cell index of tile column `col`, row `row`. */
 export declare const doodadCell: (def: DoodadDef, col: number, row: number) => number;
 /**

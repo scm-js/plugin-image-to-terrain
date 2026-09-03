@@ -127,7 +127,6 @@ export declare const Op: {
  * many u16s. Indexed by opcode; a hole means the byte is not an opcode.
  */
 export declare const OPCODE_ARGS: readonly (string | undefined)[];
-export declare const OPCODE_NAMES: readonly string[];
 export interface IscriptHeader {
     id: number;
     type: number;

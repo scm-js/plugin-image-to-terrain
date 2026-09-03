@@ -78,6 +78,15 @@ export declare const isDiamond: (d: Diamond) => boolean;
  * on pixel (64x, 32y) and spans 128x64. The result can be off the map; check bounds.
  */
 export declare function diamondAt(px: number, py: number): Diamond;
+/**
+ * The terrain the lattice says a tile belongs to — the value of the diamond under the
+ * tile's centre, as a CV5 terrain index. Null off the lattice or for a value the table
+ * does not have. Under a cliff or a shore the diamond's row is an edge set, not a terrain,
+ * so the answer is one of the two terrains it joins (the first its links name).
+ */
+export declare function isomTerrainAt(scn: Scenario & {
+    isom: Uint16Array;
+}, tileset: Tileset, tx: number, ty: number): number | null;
 /** The in-bounds diamonds a brush of `extent` centred on `d` covers, for the hover preview. */
 export declare function brushDiamonds(scn: {
     width: number;
@@ -108,6 +117,15 @@ export interface IsomCheck {
     /** Rects whose tiles are not what their ISOM resolves to (doodad tiles are excused). */
     mismatched: number;
 }
+/** Above this share of rects disagreeing with their tiles, the ISOM is reported as stale. */
+export declare const STALE_ISOM_SHARE = 0.02;
+/** `checkIsom` with the verdict the palette and Check Map draw from it. */
+export interface IsomReport extends IsomCheck {
+    /** More than `STALE_ISOM_SHARE` of the rects disagree with their tiles. */
+    stale: boolean;
+}
+/** The ISOM's health against the tiles, or null when the map has no (usable) ISOM. */
+export declare function isomReport(scn: Scenario, tileset: Tileset): IsomReport | null;
 /** How well the ISOM section describes the tiles that are actually on the map. */
 export declare function checkIsom(scn: Scenario & {
     isom: Uint16Array;
@@ -132,4 +150,23 @@ export declare function rebuildIsomFromTiles(scn: Scenario, tileset: Tileset): I
 export declare function tilesFromIsom(scn: Scenario & {
     isom: Uint16Array;
 }, tileset: Tileset, random?: () => number): IsomEdit;
+/**
+ * What `useIsomStatus` measured for the open map — whether it can be painted
+ * isometrically and how well its lattice describes its tiles. Check Map reads it.
+ */
+export type IsomStatus = {
+    kind: "no-map";
+} | {
+    kind: "loading";
+} | {
+    kind: "no-tileset";
+}
+/** The map has no ISOM section (or a truncated one): the brush has nothing to work on. */
+ | {
+    kind: "missing";
+} | {
+    kind: "ready";
+    check: IsomCheck;
+    stale: boolean;
+};
 export {};

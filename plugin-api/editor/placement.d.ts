@@ -34,7 +34,13 @@ export interface PlacementVerdict {
     problem: PlacementProblem | null;
     /** The unit in the way, for collision problems. */
     blocker: number;
+    /** The problem as a sentence fragment — "the ground is unwalkable", "it overlaps Terran Marine" — null when it fits. */
+    reason: string | null;
 }
+/** The words for a verdict's problem, given the record list the blocker indexes. */
+export declare function placementReason(tables: UnitsDat | null, unitId: number, problem: PlacementProblem | null, blocker: number, units: readonly {
+    unitId: number;
+}[]): string | null;
 /** Apply the enabled checks to a unit of type `unitId` at (x, y); `ignore` are indices that do not count as blockers (the units being moved). */
 export declare function checkPlacement(scn: Scenario, tileset: Tileset | null, tables: UnitsDat | null, opts: PlacementOptions, unitId: number, x: number, y: number, ignore?: ReadonlySet<number>): PlacementVerdict;
 /**

@@ -5,8 +5,8 @@
  * are testable; `ValidateMapDialog` renders the list and jumps to the targets.
  */
 import { type Scenario } from "../formats/chk/scenario";
-import type { DialogId } from "../atoms/uiAtoms";
-import type { IsomStatus } from "../hooks/useIsom";
+import type { DialogId } from "../components/dialogs/ids";
+import type { IsomStatus } from "./isom";
 export type IssueLevel = "error" | "warn" | "info";
 export type IssueTarget = {
     kind: "location";

@@ -17,6 +17,11 @@ export interface SectionSpec {
     /** Record stride for list sections. */
     stride?: number;
     what: string;
+    /**
+     * Read by StarEdit and other editors only — the game skips it. Leaving one out of a
+     * saved file changes nothing in play, only what an editor can do with the file later.
+     */
+    editorOnly?: true;
 }
 export declare const SECTION_SPECS: ReadonlyMap<string, SectionSpec>;
 export declare function specFor(name: string): SectionSpec | undefined;

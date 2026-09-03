@@ -33,8 +33,13 @@ export interface ActionDef {
 export declare const CONDITION_DEFS: ConditionDef[];
 export declare const ACTION_DEFS: ActionDef[];
 /**
- * Mission briefing actions. The slot assignments (`target`) follow the Scenario.chk
- * reference; no fixture map carries a briefing, so they are unverified against StarEdit.
+ * Mission briefing actions. The portrait slot lives in the record's first player group
+ * (`player`), as Blizzard's own briefings show (`tests/briefing.test.ts` reads the ones on
+ * Ground Zero and Spring Thaw: Show Portrait, Display Speaking Portrait and Text Message
+ * all round-trip) — not in the second group the community reference names. Transmission
+ * follows the same layout: slot in `player`, the duration modifier's amount in `target`
+ * with the modifier byte, the text's own time in `time`; no Blizzard map uses it, so that
+ * one rests on the reference and on SCMDraft's reading of it.
  */
 export declare const BRIEFING_ACTION_DEFS: ActionDef[];
 export declare const conditionDef: (type: number) => ConditionDef | undefined;

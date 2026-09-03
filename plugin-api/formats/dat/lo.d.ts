@@ -24,5 +24,3 @@ export declare function loOffset(lo: LoFile, frame: number, index: number): {
 } | null;
 /** The slot indices of `frame` that are in use — not necessarily contiguous (the Missile Turret only fills slot 1). */
 export declare function loUsedSlots(lo: LoFile, frame: number): number[];
-/** How many slots of `frame` are in use. */
-export declare function loSlotCount(lo: LoFile, frame: number): number;

@@ -32,8 +32,6 @@ export declare function isFogged(scn: Scenario, at: number, player: number): boo
 export declare function fogByte(before: number, players: number, mode: FogMode): number;
 /** Set or clear the `players` bits over a set of tiles. Needs a mask (see `ensureMask`). */
 export declare function paintFog(scn: Scenario, indices: Iterable<number>, players: number, mode: FogMode): TileChange[];
-/** One N×N brush application centred on (x, y), same footprint as the terrain brushes. */
-export declare function paintFogAt(scn: Scenario, x: number, y: number, size: number, players: number, mode: FogMode): TileChange[];
 /** Fog or clear the whole map for `players`. */
 export declare function fillFog(scn: Scenario, players: number, mode: FogMode): TileChange[];
 /** Swap fogged and explored everywhere for `players`. */

@@ -3,10 +3,10 @@ import { type Grp } from "../dat/grp";
 import { type IscriptBin } from "../dat/iscript";
 import { type LoFile } from "../dat/lo";
 /**
- * The unit data tables, fetched once from `public/arr` + `public/game` (mirroring the MPQ
- * tree; see scripts/extract-units.mjs). GRPs, overlay `.lo` files and the tileset remap
- * tables are fetched lazily as the viewport first needs them, so opening a melee map only
- * pulls minerals, geysers and start locations.
+ * The unit data tables, fetched once from `arr/` + `game/` (mirroring the MPQ tree; see
+ * `gamedata/extract.ts`) wherever the session's game data comes from (`gamedata/source.ts`).
+ * GRPs, overlay `.lo` files and the tileset remap tables are fetched lazily as the viewport
+ * first needs them, so opening a melee map only pulls minerals, geysers and start locations.
  */
 export interface UnitAssets {
     units: UnitsDat;
@@ -17,7 +17,7 @@ export interface UnitAssets {
     imagePaths: string[];
     /** tunit.pcx pixels: 16 rows × 8 palette indices. */
     teamColors: Uint8Array;
-    /** The animation bytecode, or null when `public/scripts/iscript.bin` is not installed (units then stay still). */
+    /** The animation bytecode, or null when `scripts/iscript.bin` is not installed (units then stay still). */
     iscript: IscriptBin | null;
     /** weapons.dat, or null when an older extraction did not ship it (Unit Settings then shows no weapon defaults). */
     weapons: WeaponsDat | null;
@@ -39,6 +39,12 @@ export declare function imageGrpPath(assets: UnitAssets, imageId: number): strin
 export declare function imageLoPath(assets: UnitAssets, imageId: number, kind: (typeof LO_KINDS)[number]): string | null;
 /** Called whenever a lazily fetched part (GRP, .lo, remap table) arrives or fails, so canvases can repaint. */
 export declare function onGrpLoaded(listener: () => void): () => void;
+/**
+ * After the game data source changes (Help ▸ Game Data… installed a copy): forget every
+ * part that failed so it is fetched again, and tell the canvases. The tables retry on
+ * their own — `getUnitAssets` drops its promise when it fails.
+ */
+export declare function retryFailedParts(): void;
 /** The decoded GRP for a path under `public/unit/`, per the LazyFiles contract. */
 export declare function requestGrp(path: string): Grp | null | undefined;
 /**

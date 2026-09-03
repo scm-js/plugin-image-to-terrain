@@ -58,7 +58,11 @@ export interface MapStatistics {
         preserved: number;
         disabled: number;
     };
-    briefings: number;
+    /** MBRF: the briefing's records and the actions in them. */
+    briefings: {
+        count: number;
+        actions: number;
+    };
     switchesNamed: number;
     sounds: number;
     /** Tiles per terrain type ("Edges and cliffs" for the unnamed edge sets), most common first; null without the tileset graphics. */

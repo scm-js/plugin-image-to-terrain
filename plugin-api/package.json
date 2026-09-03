@@ -1,0 +1,12 @@
+{
+  "name": "scm-js-plugin-api",
+  "version": "1.0.0-editor.0.0.0",
+  "description": "Type declarations of the scmJS plugin API (vendored; regenerate with `npm run build:plugin-types` in scm-js)",
+  "types": "index.d.ts",
+  "private": true,
+  "scmjs": {
+    "pluginApiVersion": 1,
+    "editorVersion": "0.0.0",
+    "builtAt": "2026-09-03T00:12:05.842Z"
+  }
+}
