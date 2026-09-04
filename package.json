@@ -13,7 +13,7 @@
     "test": "vitest run"
   },
   "devDependencies": {
-    "@scm-js/plugin-api": "github:scm-js/plugin-api",
+    "@scm-js/plugin-api": "^1",
     "esbuild": "^0.28.2",
     "typescript": "~5.9.2",
     "vitest": "^3.2.4"
