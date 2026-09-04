@@ -15,5 +15,5 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["plugin.ts", "convert.ts", "plugin-api"]
+  "include": ["plugin.ts", "convert.ts"]
 }

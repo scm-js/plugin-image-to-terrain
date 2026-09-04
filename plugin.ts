@@ -16,11 +16,11 @@
  *
  * Plain DOM only: a plugin's dialog is an element the host hands over, so this file
  * carries a tiny `h()` builder and its own scoped stylesheet. `convert.ts` is the pure
- * part; everything that touches a canvas lives here. `plugin-api/` is the editor's
- * emitted type declarations (`npm run build:plugin-types` there), vendored so this
- * repository type-checks on its own; the host erases the type-only import.
+ * part; everything that touches a canvas lives here. `@scm-js/plugin-api` is the editor's
+ * type declarations, a devDependency generated from its own `src/plugins/api.ts`; the host
+ * erases the type-only import.
  */
-import type { ContextMenuContext, DialogHandle, DialogTransfer, PluginApi, Rect, TerrainType } from "./plugin-api/plugins/api";
+import type { ContextMenuContext, DialogHandle, DialogTransfer, PluginApi, Rect, TerrainType } from "@scm-js/plugin-api";
 import {
   adjustSamples, boxBlur, cellsByTerrain, countCells, DEFAULT_ADJUSTMENTS, diamondTerrain, fitRect, fromHex, isNeutral, matchTerrains, paintOrder, toHex, unpack,
   type Adjustments, type Fit, type MatchMode, type TerrainChoice,

@@ -6,6 +6,7 @@
   "author": "Jeany",
   "homepage": "https://github.com/scm-js/plugin-image-to-terrain",
   "entry": "plugin.ts",
+  "build": "dist/plugin.js",
   "icon": "icon.svg",
   "api": 1
 }
