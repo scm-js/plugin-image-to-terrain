@@ -535,6 +535,9 @@ function openDialog(api, session) {
   };
   let showProblem = () => {
   };
+  let showWaiting = () => {
+  };
+  const w = api.ui.widgets;
   const saveSettings = () => api.storage.set("settings", s.settings);
   const targetRect = () => normalizeRect(s.target === "marked" && s.marked ? s.marked : s.target === "custom" ? s.custom : mapRect, info.width, info.height);
   const listed = () => s.settings.method === "isom" ? types.filter((t) => isomIds.has(t.id)) : types;
@@ -548,7 +551,7 @@ function openDialog(api, session) {
     if (t.text) await loadFrom(t.text, t.text.replace(/^data:.*$/, "pasted image").split("/").pop() ?? "image");
   };
   const loadFrom = async (source, name) => {
-    showProblem("Loading\u2026");
+    showWaiting("Loading\u2026");
     try {
       const image = await api.ui.loadImage(source);
       setImage(image, name);
@@ -596,6 +599,10 @@ function openDialog(api, session) {
       showProblem = (text) => {
         fileLine.textContent = text;
         fileLine.className = "tfi-file error-text";
+      };
+      showWaiting = (text) => {
+        fileLine.replaceChildren(w.spinner({ size: "sm", label: text }));
+        fileLine.className = "tfi-hint tfi-file";
       };
       const urlInput = h("input", { className: "input tfi-url", type: "text", placeholder: "https://\u2026/picture.png", "aria-label": "Image URL", onKeyDown: (e) => {
         if (e.key === "Enter") {
@@ -980,7 +987,8 @@ function openDialog(api, session) {
         fileLine.className = "tfi-file";
         handle?.setTitle(`Terrain from Image \u2014 ${s.imageName}`);
       }
-      terrainHint.textContent = "Loading tileset\u2026";
+      terrainHint.replaceChildren(w.spinner({ size: "sm", label: "Loading the tileset\u2026" }));
+      terrainList.append(w.skeleton({ lines: 6 }));
       void api.tileset.load().then(() => {
         types = api.terrain.types();
         isomIds = new Set(api.terrain.isomTypes());
@@ -991,6 +999,9 @@ function openDialog(api, session) {
         }
         rebuildTerrainList();
         update();
+      }, (err) => {
+        terrainList.replaceChildren();
+        terrainHint.textContent = `The tileset could not be loaded: ${err instanceof Error ? err.message : String(err)}`;
       });
     }
   });

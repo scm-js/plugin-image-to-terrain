@@ -239,6 +239,9 @@ function openDialog(api: PluginApi, session: Session) {
   let update: () => void = () => {};
   let setImage: (image: ImageBitmap, name: string) => void = () => {};
   let showProblem: (text: string) => void = () => {};
+  /** The file line while a picture is on its way: the editor's ring beside the words. */
+  let showWaiting: (text: string) => void = () => {};
+  const w = api.ui.widgets;
 
   const saveSettings = () => api.storage.set("settings", s.settings);
   const targetRect = (): Rect => normalizeRect(s.target === "marked" && s.marked ? s.marked : s.target === "custom" ? s.custom : mapRect, info.width, info.height);
@@ -252,7 +255,7 @@ function openDialog(api: PluginApi, session: Session) {
     if (t.text) await loadFrom(t.text, t.text.replace(/^data:.*$/, "pasted image").split("/").pop() ?? "image");
   };
   const loadFrom = async (source: Blob | string, name: string) => {
-    showProblem("Loading…");
+    showWaiting("Loading…");
     try {
       const image = await api.ui.loadImage(source);
       setImage(image, name);
@@ -298,6 +301,7 @@ function openDialog(api: PluginApi, session: Session) {
       /* Image */
       const fileLine = h("span", { className: "tfi-hint tfi-file" }, "no image yet");
       showProblem = (text) => { fileLine.textContent = text; fileLine.className = "tfi-file error-text"; };
+      showWaiting = (text) => { fileLine.replaceChildren(w.spinner({ size: "sm", label: text })); fileLine.className = "tfi-hint tfi-file"; };
       const urlInput = h("input", { className: "input tfi-url", type: "text", placeholder: "https://…/picture.png", "aria-label": "Image URL", onKeyDown: (e: KeyboardEvent) => { if (e.key === "Enter") { e.preventDefault(); void loadFrom(urlInput.value, urlInput.value.split("/").pop() ?? "image"); } } });
       const image = section("Image");
       image.append(
@@ -566,14 +570,19 @@ function openDialog(api: PluginApi, session: Session) {
       };
       if (s.image) { fileLine.textContent = `${s.imageName} (${s.image.width} × ${s.image.height})`; fileLine.className = "tfi-file"; handle?.setTitle(`Terrain from Image — ${s.imageName}`); }
 
-      // The terrain list needs the tileset graphics; they may still be loading.
-      terrainHint.textContent = "Loading tileset…";
+      // The terrain list needs the tileset graphics; they may still be loading. Grey rows
+      // stand in for the terrains meanwhile, so the pane has its shape before it has its list.
+      terrainHint.replaceChildren(w.spinner({ size: "sm", label: "Loading the tileset…" }));
+      terrainList.append(w.skeleton({ lines: 6 }));
       void api.tileset.load().then(() => {
         types = api.terrain.types();
         isomIds = new Set(api.terrain.isomTypes());
         if (s.settings.method === "isom" && isomIds.size === 0) { s.settings.method = "tiles"; methodTiles.checked = true; methodIsom.disabled = true; }
         rebuildTerrainList();
         update();
+      }, (err: unknown) => {
+        terrainList.replaceChildren();
+        terrainHint.textContent = `The tileset could not be loaded: ${err instanceof Error ? err.message : String(err)}`;
       });
     },
   });

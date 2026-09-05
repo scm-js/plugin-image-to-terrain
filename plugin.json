@@ -1,7 +1,7 @@
 {
   "name": "Terrain from Image",
   "id": "terrain-from-image",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Turn a picture into terrain. Give it an image, say which colour means which terrain, and it lays out the map to match, cliffs and shores included.",
   "author": "Jeany",
   "homepage": "https://github.com/scm-js/plugin-image-to-terrain",
