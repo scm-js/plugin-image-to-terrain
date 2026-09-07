@@ -19,9 +19,9 @@ permissions:
 
 jobs:
   ci:
-    # `secrets: inherit` passes the REGISTRY_PAT organisation secret through. main requires
-    # a pull request and a run's own GITHUB_TOKEN cannot bypass that, so the build commit is
-    # pushed with a token the ruleset lets through; only that one step in the shared
-    # workflow ever reads it.
+    # `secrets: inherit` passes CI_BUILD_KEY through. main requires a pull request and a
+    # run's own GITHUB_TOKEN cannot bypass that, so the shared workflow pushes the build
+    # commit over SSH with that write deploy key, which the ruleset names as a bypass
+    # actor; only the push step ever reads it.
     uses: scm-js/.github/.github/workflows/plugin-ci.yml@main
     secrets: inherit
