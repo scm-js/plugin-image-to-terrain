@@ -1,6 +1,6 @@
 # Terrain from Image
 
-A plugin for [scmJS](https://github.com/jeany55/scm-js), the browser-based StarCraft 1 /
+A plugin for [scmJS](https://github.com/scm-js/scm-js), the browser-based StarCraft 1 /
 Brood War map editor: it paints a picture onto the map.
 
 Bring an image in (a file, Ctrl+V, a drop, or a URL), say where on the map it goes and how it
@@ -67,7 +67,7 @@ edits. To try local changes, serve this directory (`npx serve .`) and add
 
 A plugin runs with the editor's own privileges. There is no sandbox.
 
-See [`docs/plugins.md`](https://github.com/jeany55/scm-js/blob/main/docs/plugins.md) in the editor
+See [`docs/plugins.md`](https://github.com/scm-js/scm-js/blob/main/docs/plugins.md) in the editor
 for the API tour.
 
 ## Licence
