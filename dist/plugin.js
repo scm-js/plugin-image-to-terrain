@@ -53,7 +53,7 @@ function makeMatcher(terrains, mode, stats, balance = 0.5) {
     const [lo, hi] = stats.lumaRange;
     return (r, g, b) => bandByBrightness(luminance(r, g, b), terrains.length, [lo, hi]);
   }
-  const swatches = terrains.map((t) => oklab(...unpack(t.color)));
+  const swatches = terrains.map((t2) => oklab(...unpack(t2.color)));
   const wL = 2 * (1 - Math.min(1, Math.max(0, balance)));
   const wC = 2 * Math.min(1, Math.max(0, balance));
   let mapL = (L) => L;
@@ -92,8 +92,8 @@ function makeMatcher(terrains, mode, stats, balance = 0.5) {
 function bandByBrightness(luma, count, range = [0, 255]) {
   if (count <= 0) return -1;
   const [lo, hi] = range;
-  const t = hi > lo ? (luma - lo) / (hi - lo + 1e-6) : 0.5;
-  return Math.min(count - 1, Math.max(0, Math.floor(t * count)));
+  const t2 = hi > lo ? (luma - lo) / (hi - lo + 1e-6) : 0.5;
+  return Math.min(count - 1, Math.max(0, Math.floor(t2 * count)));
 }
 function isNeutral(adj) {
   return adj.brightness === 0 && adj.contrast === 0 && adj.saturation === 0 && adj.hue === 0 && adj.gamma === 1 && !adj.invert && !adj.autoLevels;
@@ -320,7 +320,7 @@ function matchTerrains(rgba, width, height, opts) {
 }
 function countCells(grid, terrains) {
   const counts = Array.from({ length: terrains.length }, () => 0);
-  const at = new Map(terrains.map((t, i) => [t.id, i]));
+  const at = new Map(terrains.map((t2, i) => [t2.id, i]));
   for (const id of grid) {
     const i = at.get(id);
     if (i !== void 0) counts[i]++;
@@ -371,7 +371,129 @@ function fitRect(w, h2, gw, gh, fit) {
   return { dx: Math.round((gw - dw) / 2), dy: Math.round((gh - dh) / 2), dw, dh };
 }
 
+// ko.ts
+var KO = {
+  " \xB7 adjusted": " \xB7 \uBCF4\uC815\uB428",
+  ", ISOM updated": ", ISOM \uAC31\uC2E0\uB428",
+  ", {n} left as they are": ", {n}\uCE78\uC740 \uADF8\uB300\uB85C",
+  "Adaptive colour": "\uC801\uC751\uD615 \uC0C9\uC0C1",
+  "Adjust": "\uBCF4\uC815",
+  "All": "\uC804\uCCB4",
+  "Apply": "\uC801\uC6A9",
+  "Auto-levels": "\uC790\uB3D9 \uB808\uBCA8",
+  "Back to every terrain's own tile colour": "\uBAA8\uB4E0 \uC9C0\uD615\uC744 \uC790\uAE30 \uD0C0\uC77C \uC0C9\uC73C\uB85C \uB418\uB3CC\uB9BD\uB2C8\uB2E4",
+  "Blur": "\uD750\uB9BC",
+  "Brightness": "\uBC1D\uAE30",
+  "Brightness bands (heightmap)": "\uBC1D\uAE30 \uAD6C\uAC04 (\uB192\uC774 \uB9F5)",
+  "Cancel": "\uCDE8\uC18C",
+  "Choose File\u2026": "\uD30C\uC77C \uC120\uD0DD\u2026",
+  "Choose an image first.": "\uBA3C\uC800 \uC774\uBBF8\uC9C0\uB97C \uACE0\uB974\uC138\uC694.",
+  "Choose an image to preview.": "\uC774\uBBF8\uC9C0\uB97C \uACE0\uB974\uBA74 \uBBF8\uB9AC \uBD05\uB2C8\uB2E4.",
+  "Clean up": "\uC815\uB9AC",
+  "Close this dialog, drag the target rectangle on the map, and come back here with it selected": "\uC774 \uB300\uD654 \uC0C1\uC790\uB97C \uB2EB\uACE0 \uB9F5\uC5D0\uC11C \uB300\uC0C1 \uC0AC\uAC01\uD615\uC744 \uB4DC\uB798\uADF8\uD55C \uB4A4, \uADF8 \uC601\uC5ED\uC744 \uACE0\uB978 \uCC44\uB85C \uB3CC\uC544\uC635\uB2C8\uB2E4",
+  "Contrast": "\uB300\uBE44",
+  "Despeckle": "\uC7A1\uD2F0 \uC81C\uAC70",
+  "Exact key colours": "\uC815\uD655\uD55C \uAE30\uC900 \uC0C9",
+  "Eyedropper: click a spot on the source preview to make it the key colour of {name}": "\uC2A4\uD3EC\uC774\uD2B8: \uC6D0\uBCF8 \uBBF8\uB9AC\uBCF4\uAE30\uC758 \uD55C \uACF3\uC744 \uD074\uB9AD\uD558\uBA74 {name}\uC758 \uAE30\uC900 \uC0C9\uC774 \uB429\uB2C8\uB2E4",
+  "Fetch the picture at this address": "\uC774 \uC8FC\uC18C\uC758 \uADF8\uB9BC\uC744 \uAC00\uC838\uC635\uB2C8\uB2E4",
+  "Fill the area (crop)": "\uC601\uC5ED \uCC44\uC6B0\uAE30 (\uC798\uB77C \uB0C4)",
+  "Fit": "\uB9DE\uCDA4",
+  "Fit inside (letterbox)": "\uC548\uC5D0 \uB9DE\uCD94\uAE30 (\uC5EC\uBC31)",
+  "Flat tiles": "\uD3C9\uC9C0 \uD0C0\uC77C",
+  "Flip": "\uB4A4\uC9D1\uAE30",
+  "Gamma": "\uAC10\uB9C8",
+  "Height": "\uC138\uB85C",
+  "Horizontally \u2194": "\uC88C\uC6B0 \u2194",
+  "Hue": "\uC0C9\uC870",
+  "Hue and relative brightness, with the picture's range fitted to the terrains' \u2014 good for photos and drawings as they are.": "\uC0C9\uC870\uC640 \uC0C1\uB300 \uBC1D\uAE30\uB85C \uB9DE\uCD94\uBA70, \uADF8\uB9BC\uC758 \uBC94\uC704\uB97C \uC9C0\uD615\uC758 \uBC94\uC704\uC5D0 \uB9DE\uCDA5\uB2C8\uB2E4. \uC0AC\uC9C4\uC774\uB098 \uADF8\uB9BC\uC744 \uADF8\uB300\uB85C \uC4F8 \uB54C \uC88B\uC2B5\uB2C8\uB2E4.",
+  "Image": "\uC774\uBBF8\uC9C0",
+  "Image URL": "\uC774\uBBF8\uC9C0 URL",
+  "Invert": "\uBC18\uC804",
+  "Isometric terrain": "\uC544\uC774\uC18C\uBA54\uD2B8\uB9AD \uC9C0\uD615",
+  "Key colour for {name}": "{name}\uC758 \uAE30\uC900 \uC0C9",
+  "Key colour {name} matches in the picture (its own tiles average {colour})": "\uADF8\uB9BC\uC5D0\uC11C {name}{name|\uC73C\uB85C} \uB9DE\uCD9C \uAE30\uC900 \uC0C9 (\uC790\uAE30 \uD0C0\uC77C\uC758 \uD3C9\uADE0\uC740 {colour})",
+  "Left": "\uC67C\uCABD",
+  "Load": "\uBD88\uB7EC\uC624\uAE30",
+  "Loading the tileset\u2026": "\uD0C0\uC77C\uC14B\uC744 \uBD88\uB7EC\uC624\uB294 \uC911\u2026",
+  "Loading\u2026": "\uBD88\uB7EC\uC624\uB294 \uC911\u2026",
+  "Marked area ({width} \xD7 {height} at {x}, {y})": "\uD45C\uC2DC\uD55C \uC601\uC5ED ({x}, {y} \uC704\uCE58\uC758 {width} \xD7 {height})",
+  "Match": "\uB9DE\uCD94\uAE30",
+  "Match by": "\uB9DE\uCD94\uB294 \uBC29\uC2DD",
+  "Method": "\uBC29\uC2DD",
+  "Minimum region size": "\uCD5C\uC18C \uC601\uC5ED \uD06C\uAE30",
+  "Nearest (pixel art, one pixel per tile)": "\uCD5C\uADFC\uC811 (\uD53D\uC140 \uC544\uD2B8, \uD53D\uC140 \uD558\uB098\uC5D0 \uD0C0\uC77C \uD558\uB098)",
+  "No picture on the clipboard that the page may read \u2014 press Ctrl+V in this dialog instead.": "\uD398\uC774\uC9C0\uAC00 \uC77D\uC744 \uC218 \uC788\uB294 \uADF8\uB9BC\uC774 \uD074\uB9BD\uBCF4\uB4DC\uC5D0 \uC5C6\uC2B5\uB2C8\uB2E4. \uB300\uC2E0 \uC774 \uB300\uD654 \uC0C1\uC790\uC5D0\uC11C Ctrl+V\uB97C \uB204\uB974\uC138\uC694.",
+  "No terrain types \u2014 the tileset graphics are not installed.": "\uC9C0\uD615 \uC885\uB958\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4. \uD0C0\uC77C\uC14B \uADF8\uB798\uD53D\uC774 \uC124\uCE58\uB418\uC5B4 \uC788\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4.",
+  "None": "\uC5C6\uC74C",
+  "Open or create a map first.": "\uBA3C\uC800 \uB9F5\uC744 \uC5F4\uAC70\uB098 \uB9CC\uB4DC\uC138\uC694.",
+  "Paint as": "\uCE60\uD558\uB294 \uBC29\uC2DD",
+  "Paint every lattice diamond with the isometric brush: cliffs and shorelines are generated at the boundaries": "\uACA9\uC790\uC758 \uBAA8\uB4E0 \uB9C8\uB984\uBAA8\uB97C \uC544\uC774\uC18C\uBA54\uD2B8\uB9AD \uBE0C\uB7EC\uC2DC\uB85C \uCE60\uD569\uB2C8\uB2E4. \uACBD\uACC4\uC5D0\uB294 \uC808\uBCBD\uACFC \uD574\uC548\uC120\uC774 \uB9CC\uB4E4\uC5B4\uC9D1\uB2C8\uB2E4",
+  "Paint into": "\uCE60\uD560 \uACF3",
+  "Paste": "\uBD99\uC5EC\uB123\uAE30",
+  "Pick key colour for {name} from the picture": "\uADF8\uB9BC\uC5D0\uC11C {name}\uC758 \uAE30\uC900 \uC0C9 \uACE0\uB974\uAE30",
+  "Pick on Map\u2026": "\uB9F5\uC5D0\uC11C \uACE0\uB974\uAE30\u2026",
+  "Picture": "\uADF8\uB9BC",
+  "Plain colour distance to the key colours \u2014 set them with the swatches or the eyedropper.": "\uAE30\uC900 \uC0C9\uACFC\uC758 \uB2E8\uC21C\uD55C \uC0C9 \uAC70\uB9AC\uB85C \uB9DE\uCDA5\uB2C8\uB2E4. \uAE30\uC900 \uC0C9\uC740 \uC0C9\uC0C1 \uCE78\uC774\uB098 \uC2A4\uD3EC\uC774\uD2B8\uB85C \uC815\uD558\uC138\uC694.",
+  "Rectangle": "\uC0AC\uAC01\uD615",
+  "Regions with fewer cells than this join their commonest neighbour": "\uCE78 \uC218\uAC00 \uC774\uBCF4\uB2E4 \uC801\uC740 \uC601\uC5ED\uC740 \uAC00\uC7A5 \uD754\uD55C \uC774\uC6C3\uC5D0 \uD569\uCCD0\uC9D1\uB2C8\uB2E4",
+  "Reset": "\uCD08\uAE30\uD654",
+  "Reset colours": "\uC0C9 \uCD08\uAE30\uD654",
+  "Result": "\uACB0\uACFC",
+  "Sampling": "\uC0D8\uD50C\uB9C1",
+  "Saturation": "\uCC44\uB3C4",
+  "Smooth (photos)": "\uBD80\uB4DC\uB7FD\uAC8C (\uC0AC\uC9C4)",
+  "Source (adjusted)": "\uC6D0\uBCF8 (\uBCF4\uC815\uB428)",
+  "Stamp flat tile pairs only; the ISOM is left alone (Rebuild ISOM from Tiles afterwards to use the isometric brush)": "\uD3C9\uC9C0 \uD0C0\uC77C \uC30D\uB9CC \uCC0D\uACE0 ISOM\uC740 \uAC74\uB4DC\uB9AC\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4 (\uC544\uC774\uC18C\uBA54\uD2B8\uB9AD \uBE0C\uB7EC\uC2DC\uB97C \uC4F0\uB824\uBA74 \uB098\uC911\uC5D0 \uD0C0\uC77C\uC5D0\uC11C ISOM \uB2E4\uC2DC \uB9CC\uB4E4\uAE30\uB97C \uD558\uC138\uC694)",
+  "Stretch the picture's darkest and brightest to black and white first": "\uBA3C\uC800 \uADF8\uB9BC\uC758 \uAC00\uC7A5 \uC5B4\uB450\uC6B4 \uACF3\uACFC \uBC1D\uC740 \uACF3\uC744 \uAC80\uC815\uACFC \uD770\uC0C9\uAE4C\uC9C0 \uB298\uB9BD\uB2C8\uB2E4",
+  "Stretch to the area": "\uC601\uC5ED\uC5D0 \uB9DE\uAC8C \uB298\uC774\uAE30",
+  "Take the picture on the system clipboard (Ctrl+V works too)": "\uC2DC\uC2A4\uD15C \uD074\uB9BD\uBCF4\uB4DC\uC758 \uADF8\uB9BC\uC744 \uAC00\uC838\uC635\uB2C8\uB2E4 (Ctrl+V\uB3C4 \uB429\uB2C8\uB2E4)",
+  "Target": "\uB300\uC0C1",
+  "Target area": "\uB300\uC0C1 \uC601\uC5ED",
+  "Terrain from Image": "\uC774\uBBF8\uC9C0\uB85C \uC9C0\uD615 \uB9CC\uB4E4\uAE30",
+  "Terrain from Image into Area\u2026": "\uC601\uC5ED\uC5D0 \uC774\uBBF8\uC9C0\uB85C \uC9C0\uD615 \uB9CC\uB4E4\uAE30\u2026",
+  "Terrain from Image into Marked Area\u2026": "\uD45C\uC2DC\uD55C \uC601\uC5ED\uC5D0 \uC774\uBBF8\uC9C0\uB85C \uC9C0\uD615 \uB9CC\uB4E4\uAE30\u2026",
+  "Terrain from Image \u2014 {name}": "\uC774\uBBF8\uC9C0\uB85C \uC9C0\uD615 \uB9CC\uB4E4\uAE30 \u2014 {name}",
+  "Terrain from Image: drag the target rectangle": "\uC774\uBBF8\uC9C0\uB85C \uC9C0\uD615 \uB9CC\uB4E4\uAE30: \uB300\uC0C1 \uC0AC\uAC01\uD615\uC744 \uB4DC\uB798\uADF8\uD558\uC138\uC694",
+  "Terrain from Image\u2026": "\uC774\uBBF8\uC9C0\uB85C \uC9C0\uD615 \uB9CC\uB4E4\uAE30\u2026",
+  "Terrain from image ({name})": "\uC774\uBBF8\uC9C0\uB85C \uC9C0\uD615 \uB9CC\uB4E4\uAE30 ({name})",
+  "Terrains": "\uC9C0\uD615",
+  "Terrains to use": "\uC0AC\uC6A9\uD560 \uC9C0\uD615",
+  "That cell is transparent \u2014 pick a painted one.": "\uADF8 \uCE78\uC740 \uD22C\uBA85\uD569\uB2C8\uB2E4. \uCE60\uD574\uC9C4 \uCE78\uC744 \uACE0\uB974\uC138\uC694.",
+  "The picture as the matcher sees it \u2014 with the eyedropper armed, click to take a key colour": "\uB9DE\uCD94\uAE30\uAC00 \uBCF4\uB294 \uADF8\uB300\uB85C\uC758 \uADF8\uB9BC\uC785\uB2C8\uB2E4. \uC2A4\uD3EC\uC774\uD2B8\uB97C \uCF20 \uC0C1\uD0DC\uC5D0\uC11C \uD074\uB9AD\uD558\uBA74 \uAE30\uC900 \uC0C9\uC744 \uAC00\uC838\uC635\uB2C8\uB2E4",
+  "The target rectangle is empty.": "\uB300\uC0C1 \uC0AC\uAC01\uD615\uC774 \uBE44\uC5B4 \uC788\uC2B5\uB2C8\uB2E4.",
+  "The tileset could not be loaded: {error}": "\uD0C0\uC77C\uC14B\uC744 \uBD88\uB7EC\uC62C \uC218 \uC5C6\uC2B5\uB2C8\uB2E4: {error}",
+  "Ticked terrains, top to bottom, become bands from the picture's darkest to its brightest.": "\uCCB4\uD06C\uD55C \uC9C0\uD615\uC774 \uC704\uC5D0\uC11C \uC544\uB798 \uC21C\uC11C\uB85C, \uADF8\uB9BC\uC758 \uAC00\uC7A5 \uC5B4\uB450\uC6B4 \uACF3\uBD80\uD130 \uAC00\uC7A5 \uBC1D\uC740 \uACF3\uAE4C\uC9C0\uC758 \uAD6C\uAC04\uC774 \uB429\uB2C8\uB2E4.",
+  "Top": "\uC704",
+  "Use {name}": "{name} \uC0AC\uC6A9",
+  "Vertically \u2195": "\uC0C1\uD558 \u2195",
+  "Weigh": "\uBE44\uC911",
+  "Whole map ({width} \xD7 {height})": "\uB9F5 \uC804\uCCB4 ({width} \xD7 {height})",
+  "Width": "\uAC00\uB85C",
+  "blur": "\uD750\uB9BC",
+  "despeckle": "\uC7A1\uD2F0 \uC81C\uAC70",
+  "drag the rectangle on the map": "\uB9F5\uC5D0\uC11C \uC0AC\uAC01\uD615\uC744 \uB4DC\uB798\uADF8",
+  "even": "\uAC19\uC74C",
+  "hue {n}": "\uC0C9\uC870 {n}",
+  "image": "\uC774\uBBF8\uC9C0",
+  "light {n}": "\uBC1D\uAE30 {n}",
+  "min. region": "\uCD5C\uC18C \uC601\uC5ED",
+  "no image yet": "\uC544\uC9C1 \uC774\uBBF8\uC9C0 \uC5C6\uC74C",
+  "off": "\uB054",
+  "pasted image": "\uBD99\uC5EC\uB123\uC740 \uC774\uBBF8\uC9C0",
+  "picture": "\uADF8\uB9BC",
+  "{n, plural, one {# diamond} other {# diamonds}} could not take their terrain": "\uB9C8\uB984\uBAA8 {n}\uAC1C\uC5D0 \uC9C0\uD615\uC744 \uCE60\uD560 \uC218 \uC5C6\uC5C8\uC2B5\uB2C8\uB2E4",
+  "{name} \u2014 height {height}": "{name} \u2014 \uB192\uC774 {height}",
+  "{name} \u2014 height {height}, buildable": "{name} \u2014 \uB192\uC774 {height}, \uAC74\uC124 \uAC00\uB2A5",
+  "{what} \u2014 nothing changed": "{what} \u2014 \uBC14\uB010 \uAC83 \uC5C6\uC74C",
+  "{what} \u2014 {n, plural, one {# tile} other {# tiles}}": "{what} \u2014 \uD0C0\uC77C {n}\uAC1C",
+  "{width} \xD7 {height} cells at {x}, {y} \u2014 {painted} painted, {n, plural, one {# terrain} other {# terrains}}": "{x}, {y} \uC704\uCE58\uC758 {width} \xD7 {height}\uCE78 \u2014 {painted}\uCE78 \uCE60\uD568, \uC9C0\uD615 {n}\uAC1C",
+  "\u2014 this map has no ISOM section": "\u2014 \uC774 \uB9F5\uC5D0\uB294 ISOM \uC139\uC158\uC774 \uC5C6\uC2B5\uB2C8\uB2E4",
+  "\u2026or drop a picture on this dialog, or press Ctrl+V": "\u2026\uB610\uB294 \uC774 \uB300\uD654 \uC0C1\uC790\uC5D0 \uADF8\uB9BC\uC744 \uB04C\uC5B4\uB2E4 \uB193\uAC70\uB098 Ctrl+V\uB97C \uB204\uB974\uC138\uC694"
+};
+
 // plugin.ts
+var t = (text, _params) => text;
+var msg = (text) => text;
 function h(tag, props = null, ...children) {
   const el = document.createElement(tag);
   if (props) {
@@ -516,7 +638,7 @@ var normalizeRect = (r, w, hh) => ({
 function openDialog(api, session) {
   const info = api.document.info();
   if (!info) {
-    api.ui.status("Open or create a map first.");
+    api.ui.status(t("Open or create a map first."));
     return;
   }
   const s = session;
@@ -540,18 +662,18 @@ function openDialog(api, session) {
   const w = api.ui.widgets;
   const saveSettings = () => api.storage.set("settings", s.settings);
   const targetRect = () => normalizeRect(s.target === "marked" && s.marked ? s.marked : s.target === "custom" ? s.custom : mapRect, info.width, info.height);
-  const listed = () => s.settings.method === "isom" ? types.filter((t) => isomIds.has(t.id)) : types;
+  const listed = () => s.settings.method === "isom" ? types.filter((type) => isomIds.has(type.id)) : types;
   const keyOf = (id) => s.keys.get(id) ?? api.terrain.terrainColor(id) ?? 0;
-  const takeTransfer = async (t) => {
-    const file = t.files.find((f) => f.type.startsWith("image/")) ?? t.files[0];
+  const takeTransfer = async (transfer) => {
+    const file = transfer.files.find((f) => f.type.startsWith("image/")) ?? transfer.files[0];
     if (file) {
       await loadFrom(file, file.name);
       return;
     }
-    if (t.text) await loadFrom(t.text, t.text.replace(/^data:.*$/, "pasted image").split("/").pop() ?? "image");
+    if (transfer.text) await loadFrom(transfer.text, transfer.text.startsWith("data:") ? t("pasted image") : transfer.text.split("/").pop() ?? t("image"));
   };
   const loadFrom = async (source, name) => {
-    showWaiting("Loading\u2026");
+    showWaiting(t("Loading\u2026"));
     try {
       const image = await api.ui.loadImage(source);
       setImage(image, name);
@@ -560,18 +682,18 @@ function openDialog(api, session) {
     }
   };
   handle = api.ui.dialog({
-    title: "Terrain from Image",
+    title: t("Terrain from Image"),
     size: "xl",
     tall: true,
     buttons: [
-      { label: "Apply", primary: true, run: () => apply() },
-      { label: "Cancel" }
+      { label: t("Apply"), primary: true, run: () => apply() },
+      { label: t("Cancel") }
     ],
-    onPaste: (t) => {
-      void takeTransfer(t);
+    onPaste: (transfer) => {
+      void takeTransfer(transfer);
     },
-    onDrop: (t) => {
-      void takeTransfer(t);
+    onDrop: (transfer) => {
+      void takeTransfer(transfer);
     },
     mount(body) {
       const root = h("div", { className: "tfi" });
@@ -595,7 +717,7 @@ function openDialog(api, session) {
         const input = h("input", { type: "checkbox", checked, onChange: () => onChange(input.checked) });
         return h("label", { className: "check", title }, input, label);
       };
-      const fileLine = h("span", { className: "tfi-hint tfi-file" }, "no image yet");
+      const fileLine = h("span", { className: "tfi-hint tfi-file" }, t("no image yet"));
       showProblem = (text) => {
         fileLine.textContent = text;
         fileLine.className = "tfi-file error-text";
@@ -604,41 +726,41 @@ function openDialog(api, session) {
         fileLine.replaceChildren(w.spinner({ size: "sm", label: text }));
         fileLine.className = "tfi-hint tfi-file";
       };
-      const urlInput = h("input", { className: "input tfi-url", type: "text", placeholder: "https://\u2026/picture.png", "aria-label": "Image URL", onKeyDown: (e) => {
+      const urlInput = h("input", { className: "input tfi-url", type: "text", placeholder: "https://\u2026/picture.png", "aria-label": t("Image URL"), onKeyDown: (e) => {
         if (e.key === "Enter") {
           e.preventDefault();
-          void loadFrom(urlInput.value, urlInput.value.split("/").pop() ?? "image");
+          void loadFrom(urlInput.value, urlInput.value.split("/").pop() ?? t("image"));
         }
       } });
-      const image = section("Image");
+      const image = section(t("Image"));
       image.append(
         h(
           "div",
           { className: "tfi-row wrap" },
-          btn("Choose File\u2026", () => {
+          btn(t("Choose File\u2026"), () => {
             void (async () => {
               const [file] = await api.ui.pickFiles({ accept: "image/*" });
               if (file) await loadFrom(file, file.name);
             })();
           }),
-          btn("Paste", () => {
+          btn(t("Paste"), () => {
             void (async () => {
               const blob = await api.ui.readClipboardImage();
-              if (blob) await loadFrom(blob, "pasted image");
-              else showProblem("No picture on the clipboard that the page may read \u2014 press Ctrl+V in this dialog instead.");
+              if (blob) await loadFrom(blob, t("pasted image"));
+              else showProblem(t("No picture on the clipboard that the page may read \u2014 press Ctrl+V in this dialog instead."));
             })();
-          }, "Take the picture on the system clipboard (Ctrl+V works too)"),
+          }, t("Take the picture on the system clipboard (Ctrl+V works too)")),
           fileLine
         ),
-        h("div", { className: "tfi-row" }, urlInput, btn("Load", () => {
-          void loadFrom(urlInput.value, urlInput.value.split("/").pop() ?? "image");
-        }, "Fetch the picture at this address")),
-        h("div", { className: "tfi-drop" }, "\u2026or drop a picture on this dialog, or press Ctrl+V")
+        h("div", { className: "tfi-row" }, urlInput, btn(t("Load"), () => {
+          void loadFrom(urlInput.value, urlInput.value.split("/").pop() ?? t("image"));
+        }, t("Fetch the picture at this address"))),
+        h("div", { className: "tfi-drop" }, t("\u2026or drop a picture on this dialog, or press Ctrl+V"))
       );
-      const targetSel = select("Target area", [
-        ["map", `Whole map (${info.width} \xD7 ${info.height})`],
-        ...s.marked ? [["marked", `Marked area (${s.marked.x1 - s.marked.x0} \xD7 ${s.marked.y1 - s.marked.y0} at ${s.marked.x0}, ${s.marked.y0})`]] : [],
-        ["custom", "Rectangle"]
+      const targetSel = select(t("Target area"), [
+        ["map", t("Whole map ({width} \xD7 {height})", { width: info.width, height: info.height })],
+        ...s.marked ? [["marked", t("Marked area ({width} \xD7 {height} at {x}, {y})", { width: s.marked.x1 - s.marked.x0, height: s.marked.y1 - s.marked.y0, x: s.marked.x0, y: s.marked.y0 })]] : [],
+        ["custom", t("Rectangle")]
       ], s.target, (v) => {
         s.target = v;
         syncCustom();
@@ -652,25 +774,25 @@ function openDialog(api, session) {
         input.value = String(get());
         return input;
       };
-      const cx = num("Left", () => s.custom.x0, (v) => {
+      const cx = num(t("Left"), () => s.custom.x0, (v) => {
         s.custom = { ...s.custom, x1: v + (s.custom.x1 - s.custom.x0), x0: v };
       });
-      const cy = num("Top", () => s.custom.y0, (v) => {
+      const cy = num(t("Top"), () => s.custom.y0, (v) => {
         s.custom = { ...s.custom, y1: v + (s.custom.y1 - s.custom.y0), y0: v };
       });
-      const cw = num("Width", () => s.custom.x1 - s.custom.x0, (v) => {
+      const cw = num(t("Width"), () => s.custom.x1 - s.custom.x0, (v) => {
         s.custom = { ...s.custom, x1: s.custom.x0 + v };
       });
-      const ch = num("Height", () => s.custom.y1 - s.custom.y0, (v) => {
+      const ch = num(t("Height"), () => s.custom.y1 - s.custom.y0, (v) => {
         s.custom = { ...s.custom, y1: s.custom.y0 + v };
       });
-      const customRow = h("div", { className: "tfi-row" }, h("label", null, "Rectangle"), h("span", { className: "tfi-hint" }, "x"), cx, h("span", { className: "tfi-hint" }, "y"), cy, h("span", { className: "tfi-hint" }, "w"), cw, h("span", { className: "tfi-hint" }, "h"), ch);
-      const pickBtn = btn("Pick on Map\u2026", () => {
+      const customRow = h("div", { className: "tfi-row" }, h("label", null, t("Rectangle")), h("span", { className: "tfi-hint" }, "x"), cx, h("span", { className: "tfi-hint" }, "y"), cy, h("span", { className: "tfi-hint" }, "w"), cw, h("span", { className: "tfi-hint" }, "h"), ch);
+      const pickBtn = btn(t("Pick on Map\u2026"), () => {
         void pickTarget();
-      }, "Close this dialog, drag the target rectangle on the map, and come back here with it selected");
+      }, t("Close this dialog, drag the target rectangle on the map, and come back here with it selected"));
       targetSel.classList.add("grow");
       targetSel.style.width = "";
-      section("Target").append(h("div", { className: "tfi-row" }, h("label", null, "Paint into"), targetSel), h("div", { className: "tfi-row" }, h("label", null, ""), pickBtn, h("span", { className: "tfi-hint" }, "drag the rectangle on the map")), customRow);
+      section(t("Target")).append(h("div", { className: "tfi-row" }, h("label", null, t("Paint into")), targetSel), h("div", { className: "tfi-row" }, h("label", null, ""), pickBtn, h("span", { className: "tfi-hint" }, t("drag the rectangle on the map"))), customRow);
       const syncCustom = () => {
         customRow.style.display = s.target === "custom" ? "" : "none";
         cx.value = String(s.custom.x0);
@@ -681,7 +803,7 @@ function openDialog(api, session) {
       syncCustom();
       const pickTarget = async () => {
         handle?.close();
-        const rect = await api.ui.pickArea({ prompt: "Terrain from Image: drag the target rectangle" });
+        const rect = await api.ui.pickArea({ prompt: t("Terrain from Image: drag the target rectangle") });
         if (rect && rect.x1 > rect.x0 && rect.y1 > rect.y0) {
           s.target = "custom";
           s.custom = rect;
@@ -693,25 +815,25 @@ function openDialog(api, session) {
         saveSettings();
         update();
       };
-      section("Fit").append(
+      section(t("Fit")).append(
         h(
           "div",
           { className: "tfi-row" },
-          h("label", null, "Picture"),
-          select("Fit", [["stretch", "Stretch to the area"], ["contain", "Fit inside (letterbox)"], ["cover", "Fill the area (crop)"]], s.settings.fit, (v) => set("fit", v))
+          h("label", null, t("Picture")),
+          select(t("Fit"), [["stretch", t("Stretch to the area")], ["contain", t("Fit inside (letterbox)")], ["cover", t("Fill the area (crop)")]], s.settings.fit, (v) => set("fit", v))
         ),
         h(
           "div",
           { className: "tfi-row" },
-          h("label", null, "Flip"),
-          tick("Horizontally \u2194", s.settings.flipH, (v) => set("flipH", v)),
-          tick("Vertically \u2195", s.settings.flipV, (v) => set("flipV", v))
+          h("label", null, t("Flip")),
+          tick(t("Horizontally \u2194"), s.settings.flipH, (v) => set("flipH", v)),
+          tick(t("Vertically \u2195"), s.settings.flipV, (v) => set("flipV", v))
         ),
         h(
           "div",
           { className: "tfi-row" },
-          h("label", null, "Sampling"),
-          select("Sampling", [["smooth", "Smooth (photos)"], ["nearest", "Nearest (pixel art, one pixel per tile)"]], s.settings.sampling, (v) => set("sampling", v))
+          h("label", null, t("Sampling")),
+          select(t("Sampling"), [["smooth", t("Smooth (photos)")], ["nearest", t("Nearest (pixel art, one pixel per tile)")]], s.settings.sampling, (v) => set("sampling", v))
         )
       );
       const sliders = [];
@@ -729,12 +851,12 @@ function openDialog(api, session) {
       };
       const adj = () => s.settings.adjust;
       const signed = (v) => v > 0 ? `+${v}` : String(v);
-      const autoTick = tick("Auto-levels", adj().autoLevels, (v) => {
+      const autoTick = tick(t("Auto-levels"), adj().autoLevels, (v) => {
         adj().autoLevels = v;
         saveSettings();
         update();
-      }, "Stretch the picture's darkest and brightest to black and white first");
-      const invertTick = tick("Invert", adj().invert, (v) => {
+      }, t("Stretch the picture's darkest and brightest to black and white first"));
+      const invertTick = tick(t("Invert"), adj().invert, (v) => {
         adj().invert = v;
         saveSettings();
         update();
@@ -750,52 +872,52 @@ function openDialog(api, session) {
         saveSettings();
         update();
       };
-      section("Adjust", btn("Reset", resetAdjust)).append(
-        slider("Brightness", -100, 100, 1, () => adj().brightness, (v) => {
+      section(t("Adjust"), btn(t("Reset"), resetAdjust)).append(
+        slider(t("Brightness"), -100, 100, 1, () => adj().brightness, (v) => {
           adj().brightness = v;
         }, signed),
-        slider("Contrast", -100, 100, 1, () => adj().contrast, (v) => {
+        slider(t("Contrast"), -100, 100, 1, () => adj().contrast, (v) => {
           adj().contrast = v;
         }, signed),
-        slider("Saturation", -100, 100, 1, () => adj().saturation, (v) => {
+        slider(t("Saturation"), -100, 100, 1, () => adj().saturation, (v) => {
           adj().saturation = v;
         }, signed),
-        slider("Hue", -180, 180, 1, () => adj().hue, (v) => {
+        slider(t("Hue"), -180, 180, 1, () => adj().hue, (v) => {
           adj().hue = v;
         }, (v) => `${signed(v)}\xB0`),
-        slider("Gamma", 0.2, 4, 0.05, () => adj().gamma, (v) => {
+        slider(t("Gamma"), 0.2, 4, 0.05, () => adj().gamma, (v) => {
           adj().gamma = v;
         }, (v) => v.toFixed(2)),
         h("div", { className: "tfi-row" }, h("label", null, ""), autoTick, invertTick)
       );
       const modeHint = h("div", { className: "tfi-hint" });
-      const balanceRow = slider("Weigh", 0, 100, 1, () => Math.round(s.settings.balance * 100), (v) => {
+      const balanceRow = slider(t("Weigh"), 0, 100, 1, () => Math.round(s.settings.balance * 100), (v) => {
         s.settings.balance = v / 100;
-      }, (v) => v === 50 ? "even" : v < 50 ? `light ${100 - v}` : `hue ${v}`);
-      section("Match").append(
+      }, (v) => v === 50 ? t("even") : v < 50 ? t("light {n}", { n: 100 - v }) : t("hue {n}", { n: v }));
+      section(t("Match")).append(
         h(
           "div",
           { className: "tfi-row" },
-          h("label", null, "Method"),
-          select("Match by", [["adaptive", "Adaptive colour"], ["exact", "Exact key colours"], ["brightness", "Brightness bands (heightmap)"]], s.settings.mode, (v) => set("mode", v))
+          h("label", null, t("Method")),
+          select(t("Match by"), [["adaptive", t("Adaptive colour")], ["exact", t("Exact key colours")], ["brightness", t("Brightness bands (heightmap)")]], s.settings.mode, (v) => set("mode", v))
         ),
         balanceRow,
         modeHint,
         h(
           "div",
           { className: "tfi-row wrap" },
-          h("label", null, "Clean up"),
-          h("span", { className: "tfi-hint" }, "blur"),
-          select("Blur", [["0", "off"], ["1", "1"], ["2", "2"], ["3", "3"]], String(s.settings.smooth), (v) => set("smooth", Number(v))),
-          h("span", { className: "tfi-hint" }, "despeckle"),
-          select("Despeckle", [["0", "off"], ["1", "1\xD7"], ["2", "2\xD7"], ["3", "3\xD7"]], String(s.settings.despeckle), (v) => set("despeckle", Number(v))),
-          h("span", { className: "tfi-hint" }, "min. region"),
+          h("label", null, t("Clean up")),
+          h("span", { className: "tfi-hint" }, t("blur")),
+          select(t("Blur"), [["0", t("off")], ["1", "1"], ["2", "2"], ["3", "3"]], String(s.settings.smooth), (v) => set("smooth", Number(v))),
+          h("span", { className: "tfi-hint" }, t("despeckle")),
+          select(t("Despeckle"), [["0", t("off")], ["1", "1\xD7"], ["2", "2\xD7"], ["3", "3\xD7"]], String(s.settings.despeckle), (v) => set("despeckle", Number(v))),
+          h("span", { className: "tfi-hint" }, t("min. region")),
           (() => {
-            const n = num("Minimum region size", () => s.settings.minRegion, (v) => {
+            const n = num(t("Minimum region size"), () => s.settings.minRegion, (v) => {
               s.settings.minRegion = Math.max(0, v);
               saveSettings();
             });
-            n.title = "Regions with fewer cells than this join their commonest neighbour";
+            n.title = t("Regions with fewer cells than this join their commonest neighbour");
             return n;
           })()
         )
@@ -812,23 +934,23 @@ function openDialog(api, session) {
         update();
       } });
       (s.settings.method === "isom" ? methodIsom : methodTiles).checked = true;
-      section("Paint as").append(h(
+      section(t("Paint as")).append(h(
         "div",
         { className: "tfi-row wrap" },
-        h("label", { className: "check", title: "Paint every lattice diamond with the isometric brush: cliffs and shorelines are generated at the boundaries" }, methodIsom, "Isometric terrain"),
-        h("label", { className: "check", title: "Stamp flat tile pairs only; the ISOM is left alone (Rebuild ISOM from Tiles afterwards to use the isometric brush)" }, methodTiles, "Flat tiles"),
-        !isomOk ? h("span", { className: "tfi-hint" }, "\u2014 this map has no ISOM section") : null
+        h("label", { className: "check", title: t("Paint every lattice diamond with the isometric brush: cliffs and shorelines are generated at the boundaries") }, methodIsom, t("Isometric terrain")),
+        h("label", { className: "check", title: t("Stamp flat tile pairs only; the ISOM is left alone (Rebuild ISOM from Tiles afterwards to use the isometric brush)") }, methodTiles, t("Flat tiles")),
+        !isomOk ? h("span", { className: "tfi-hint" }, t("\u2014 this map has no ISOM section")) : null
       ));
-      const sourceCanvas = h("canvas", { width: 1, height: 1, title: "The picture as the matcher sees it \u2014 with the eyedropper armed, click to take a key colour" });
+      const sourceCanvas = h("canvas", { width: 1, height: 1, title: t("The picture as the matcher sees it \u2014 with the eyedropper armed, click to take a key colour") });
       const resultCanvas = h("canvas", { width: 1, height: 1 });
       const sourceBox = h("div", { className: "tfi-canvas" }, sourceCanvas);
-      const summary = h("div", { className: "tfi-summary" }, "Choose an image to preview.");
+      const summary = h("div", { className: "tfi-summary" }, t("Choose an image to preview."));
       side.append(
         h(
           "div",
           { className: "tfi-previews" },
-          h("div", { className: "tfi-preview" }, h("span", null, "Source (adjusted)"), sourceBox),
-          h("div", { className: "tfi-preview" }, h("span", null, "Result"), h("div", { className: "tfi-canvas" }, resultCanvas))
+          h("div", { className: "tfi-preview" }, h("span", null, t("Source (adjusted)")), sourceBox),
+          h("div", { className: "tfi-preview" }, h("span", null, t("Result")), h("div", { className: "tfi-canvas" }, resultCanvas))
         ),
         summary
       );
@@ -841,7 +963,7 @@ function openDialog(api, session) {
         const y = Math.min(gridH - 1, Math.max(0, Math.floor((e.clientY - top) / scale)));
         const i = (y * gridW + x) * 4;
         if (samples[i + 3] < 8) {
-          api.ui.status("That cell is transparent \u2014 pick a painted one.");
+          api.ui.status(t("That cell is transparent \u2014 pick a painted one."));
           return;
         }
         s.keys.set(s.dropper, samples[i] << 16 | samples[i + 1] << 8 | samples[i + 2]);
@@ -850,7 +972,7 @@ function openDialog(api, session) {
         rebuildTerrainList();
         update();
       });
-      const terrainList = h("div", { className: "tfi-terrains", role: "group", "aria-label": "Terrains to use" });
+      const terrainList = h("div", { className: "tfi-terrains", role: "group", "aria-label": t("Terrains to use") });
       const terrainHint = h("div", { className: "tfi-hint" });
       side.append(
         h(
@@ -859,25 +981,25 @@ function openDialog(api, session) {
           h(
             "header",
             null,
-            "Terrains",
+            t("Terrains"),
             h("span", { className: "tfi-spacer" }),
-            btn("All", () => {
-              for (const t of listed()) s.chosen.add(t.id);
+            btn(t("All"), () => {
+              for (const type of listed()) s.chosen.add(type.id);
               rebuildTerrainList();
               update();
             }),
-            btn("None", () => {
+            btn(t("None"), () => {
               s.chosen.clear();
               rebuildTerrainList();
               update();
             }),
-            btn("Reset colours", () => {
+            btn(t("Reset colours"), () => {
               s.keys.clear();
               saveKeys(api, s.keys);
               s.dropper = null;
               rebuildTerrainList();
               update();
-            }, "Back to every terrain's own tile colour")
+            }, t("Back to every terrain's own tile colour"))
           ),
           terrainList,
           terrainHint
@@ -888,38 +1010,38 @@ function openDialog(api, session) {
         terrainList.replaceChildren();
         counts.clear();
         const list = listed();
-        if (s.chosen.size === 0 && list.length > 0 && !s.image) for (const t of list) s.chosen.add(t.id);
-        if (s.chosen.size === 0 && list.length > 0 && s.image && !s.keys.size) for (const t of list) s.chosen.add(t.id);
-        for (const t of list) {
-          const on = h("input", { type: "checkbox", checked: s.chosen.has(t.id), "aria-label": `Use ${t.name}`, onChange: () => {
-            if (on.checked) s.chosen.add(t.id);
-            else s.chosen.delete(t.id);
+        if (s.chosen.size === 0 && list.length > 0 && !s.image) for (const type of list) s.chosen.add(type.id);
+        if (s.chosen.size === 0 && list.length > 0 && s.image && !s.keys.size) for (const type of list) s.chosen.add(type.id);
+        for (const type of list) {
+          const on = h("input", { type: "checkbox", checked: s.chosen.has(type.id), "aria-label": t("Use {name}", { name: type.name }), onChange: () => {
+            if (on.checked) s.chosen.add(type.id);
+            else s.chosen.delete(type.id);
             row.classList.toggle("off", !on.checked);
             update();
           } });
-          const key = h("input", { type: "color", className: s.keys.has(t.id) ? "custom" : "", title: `Key colour ${t.name} matches in the picture (its own tiles average ${toHex(api.terrain.terrainColor(t.id) ?? 0)})`, "aria-label": `Key colour for ${t.name}` });
-          key.value = toHex(keyOf(t.id));
+          const key = h("input", { type: "color", className: s.keys.has(type.id) ? "custom" : "", title: t("Key colour {name} matches in the picture (its own tiles average {colour})", { name: type.name, colour: toHex(api.terrain.terrainColor(type.id) ?? 0) }), "aria-label": t("Key colour for {name}", { name: type.name }) });
+          key.value = toHex(keyOf(type.id));
           key.addEventListener("input", () => {
             const c = fromHex(key.value);
             if (c === null) return;
-            if (c === (api.terrain.terrainColor(t.id) ?? 0)) s.keys.delete(t.id);
-            else s.keys.set(t.id, c);
-            key.classList.toggle("custom", s.keys.has(t.id));
+            if (c === (api.terrain.terrainColor(type.id) ?? 0)) s.keys.delete(type.id);
+            else s.keys.set(type.id, c);
+            key.classList.toggle("custom", s.keys.has(type.id));
             saveKeys(api, s.keys);
             update();
           });
-          const eye = h("button", { className: `btn sm tfi-eye ${s.dropper === t.id ? "armed" : ""}`, type: "button", title: `Eyedropper: click a spot on the source preview to make it ${t.name}'s key colour`, "aria-label": `Pick key colour for ${t.name} from the picture`, onClick: () => {
-            s.dropper = s.dropper === t.id ? null : t.id;
+          const eye = h("button", { className: `btn sm tfi-eye ${s.dropper === type.id ? "armed" : ""}`, type: "button", title: t("Eyedropper: click a spot on the source preview to make it the key colour of {name}", { name: type.name }), "aria-label": t("Pick key colour for {name} from the picture", { name: type.name }), onClick: () => {
+            s.dropper = s.dropper === type.id ? null : type.id;
             rebuildTerrainList();
             sourceBox.classList.toggle("dropper", s.dropper !== null);
           } }, "\u2316");
           const count = h("span", { className: "tfi-count" });
-          counts.set(t.id, count);
-          const row = h("div", { className: `tfi-terrain ${s.chosen.has(t.id) ? "" : "off"}` }, on, key, eye, h("span", { className: "tfi-name", title: `${t.name} \u2014 height ${t.height}${t.buildable ? ", buildable" : ""}` }, terrainSwatch(api, t), t.name), count);
+          counts.set(type.id, count);
+          const row = h("div", { className: `tfi-terrain ${s.chosen.has(type.id) ? "" : "off"}` }, on, key, eye, h("span", { className: "tfi-name", title: type.buildable ? t("{name} \u2014 height {height}, buildable", { name: type.name, height: type.height }) : t("{name} \u2014 height {height}", { name: type.name, height: type.height }) }, terrainSwatch(api, type), type.name), count);
           terrainList.append(row);
         }
         sourceBox.classList.toggle("dropper", s.dropper !== null);
-        terrainHint.textContent = list.length === 0 ? "No terrain types \u2014 the tileset graphics are not installed." : "";
+        terrainHint.textContent = list.length === 0 ? t("No terrain types \u2014 the tileset graphics are not installed.") : "";
       };
       const rawSamples = (rect, gw, gh) => {
         if (!s.image) return null;
@@ -930,15 +1052,15 @@ function openDialog(api, session) {
       update = () => {
         const mode = s.settings.mode;
         balanceRow.style.display = mode === "brightness" ? "none" : "";
-        modeHint.textContent = mode === "brightness" ? "Ticked terrains, top to bottom, become bands from the picture's darkest to its brightest." : mode === "adaptive" ? "Hue and relative brightness, with the picture's range fitted to the terrains' \u2014 good for photos and drawings as they are." : "Plain colour distance to the key colours \u2014 set them with the swatches or the eyedropper.";
+        modeHint.textContent = mode === "brightness" ? t("Ticked terrains, top to bottom, become bands from the picture's darkest to its brightest.") : mode === "adaptive" ? t("Hue and relative brightness, with the picture's range fitted to the terrains' \u2014 good for photos and drawings as they are.") : t("Plain colour distance to the key colours \u2014 set them with the swatches or the eyedropper.");
         const rect = targetRect();
         const gw = rect.x1 - rect.x0, gh = rect.y1 - rect.y0;
-        choices = listed().filter((t) => s.chosen.has(t.id)).map((t) => ({ id: t.id, color: keyOf(t.id) }));
+        choices = listed().filter((type) => s.chosen.has(type.id)).map((type) => ({ id: type.id, color: keyOf(type.id) }));
         for (const el of counts.values()) el.textContent = "";
         if (!s.image || gw <= 0 || gh <= 0) {
           grid = null;
           samples = null;
-          summary.textContent = !s.image ? "Choose an image to preview." : "The target rectangle is empty.";
+          summary.textContent = !s.image ? t("Choose an image to preview.") : t("The target rectangle is empty.");
           sourceCanvas.width = sourceCanvas.height = resultCanvas.width = resultCanvas.height = 1;
           return;
         }
@@ -970,7 +1092,7 @@ function openDialog(api, session) {
         });
         const painted = per.reduce((a, b) => a + b, 0);
         const skipped = gw * gh - painted;
-        summary.textContent = `${gw} \xD7 ${gh} cells at ${rect.x0}, ${rect.y0} \u2014 ${painted} painted, ${choices.length} terrain${choices.length === 1 ? "" : "s"}${skipped > 0 ? `, ${skipped} left as they are` : ""}${!isNeutral(s.settings.adjust) ? " \xB7 adjusted" : ""}`;
+        summary.textContent = t("{width} \xD7 {height} cells at {x}, {y} \u2014 {painted} painted, {n, plural, one {# terrain} other {# terrains}}", { width: gw, height: gh, x: rect.x0, y: rect.y0, painted, n: choices.length }) + (skipped > 0 ? t(", {n} left as they are", { n: skipped }) : "") + (!isNeutral(s.settings.adjust) ? t(" \xB7 adjusted") : "");
       };
       setImage = (image2, name) => {
         if (s.image && s.image !== image2) s.image.close();
@@ -979,15 +1101,15 @@ function openDialog(api, session) {
         rawCache = null;
         fileLine.textContent = `${name} (${image2.width} \xD7 ${image2.height})`;
         fileLine.className = "tfi-file";
-        handle?.setTitle(`Terrain from Image \u2014 ${name}`);
+        handle?.setTitle(t("Terrain from Image \u2014 {name}", { name }));
         update();
       };
       if (s.image) {
         fileLine.textContent = `${s.imageName} (${s.image.width} \xD7 ${s.image.height})`;
         fileLine.className = "tfi-file";
-        handle?.setTitle(`Terrain from Image \u2014 ${s.imageName}`);
+        handle?.setTitle(t("Terrain from Image \u2014 {name}", { name: s.imageName }));
       }
-      terrainHint.replaceChildren(w.spinner({ size: "sm", label: "Loading the tileset\u2026" }));
+      terrainHint.replaceChildren(w.spinner({ size: "sm", label: t("Loading the tileset\u2026") }));
       terrainList.append(w.skeleton({ lines: 6 }));
       void api.tileset.load().then(() => {
         types = api.terrain.types();
@@ -1001,20 +1123,20 @@ function openDialog(api, session) {
         update();
       }, (err) => {
         terrainList.replaceChildren();
-        terrainHint.textContent = `The tileset could not be loaded: ${err instanceof Error ? err.message : String(err)}`;
+        terrainHint.textContent = t("The tileset could not be loaded: {error}", { error: err instanceof Error ? err.message : String(err) });
       });
     }
   });
   const apply = () => {
     if (!grid || !s.image) {
-      api.ui.status("Choose an image first.");
+      api.ui.status(t("Choose an image first."));
       return false;
     }
     const g = grid;
     const rect = targetRect();
     const gw = rect.x1 - rect.x0, gh = rect.y1 - rect.y0;
     if (gw <= 0 || gh <= 0) return false;
-    const label = `Terrain from image (${s.imageName || "picture"})`;
+    const label = t("Terrain from image ({name})", { name: s.imageName || t("picture") });
     const result = api.document.edit(label, (tx) => {
       if (s.settings.method === "isom") {
         const byTerrain = /* @__PURE__ */ new Map();
@@ -1033,7 +1155,7 @@ function openDialog(api, session) {
         for (const id of paintOrder([...byTerrain.keys()], api.terrain.heightOf, counts)) {
           for (const d of byTerrain.get(id)) if (!tx.paintIsom(d, id, 1)) refused++;
         }
-        if (refused > 0) tx.note(`${refused} diamonds could not take their terrain`);
+        if (refused > 0) tx.note(t("{n, plural, one {# diamond} other {# diamonds}} could not take their terrain", { n: refused }));
       } else {
         for (const [id, cells] of cellsByTerrain(g, gw, gh, rect.x0, rect.y0, info.width)) tx.stampTerrain(cells, id);
       }
@@ -1041,45 +1163,47 @@ function openDialog(api, session) {
     s.image.close();
     s.image = null;
     if (!result.changed) {
-      api.ui.status(`${label} \u2014 nothing changed`);
+      api.ui.status(t("{what} \u2014 nothing changed", { what: label }));
       return true;
     }
-    api.ui.status(`${label} \u2014 ${result.tiles} tile${result.tiles === 1 ? "" : "s"}${result.isom > 0 ? ", ISOM updated" : ""}${result.notes.length > 0 ? `; ${result.notes.join(", ")}` : ""}`);
+    api.ui.status(t("{what} \u2014 {n, plural, one {# tile} other {# tiles}}", { what: label, n: result.tiles }) + (result.isom > 0 ? t(", ISOM updated") : "") + (result.notes.length > 0 ? `; ${result.notes.join(", ")}` : ""));
     return true;
   };
 }
-function terrainSwatch(api, t) {
-  const picture = api.graphics.tileImage(t.group << 4);
+function terrainSwatch(api, type) {
+  const picture = api.graphics.tileImage(type.group << 4);
   if (picture) {
     picture.image.className = "tfi-swatch";
     return picture.image;
   }
-  const mean = api.terrain.terrainColor(t.id);
+  const mean = api.terrain.terrainColor(type.id);
   return h("span", { className: "tfi-swatch", style: `background:${mean === null ? "#000" : toHex(mean)}` });
 }
 function activate(api) {
+  api.i18n.register({ ko: KO });
+  t = (text, params) => api.i18n.t(text, params);
   const open = (marked, custom = null) => {
     if (!api.document.isOpen()) {
-      api.ui.status("Open or create a map first.");
+      api.ui.status(t("Open or create a map first."));
       return;
     }
     openDialog(api, newSession(api, marked, custom));
   };
   const pickThenOpen = async (marked) => {
-    const rect = await api.ui.pickArea({ prompt: "Terrain from Image: drag the target rectangle" });
+    const rect = await api.ui.pickArea({ prompt: t("Terrain from Image: drag the target rectangle") });
     if (rect && rect.x1 > rect.x0 && rect.y1 > rect.y0) open(marked, rect);
   };
-  const label = (ctx) => ctx.markedArea ? "Terrain from Image into Marked Area\u2026" : "Terrain from Image\u2026";
+  const label = (ctx) => ctx.markedArea ? t("Terrain from Image into Marked Area\u2026") : t("Terrain from Image\u2026");
   const enabled = () => api.document.isOpen();
-  api.commands.register({ id: "open", title: "Terrain from Image\u2026", enabled, run: () => open(api.selection.markedArea()) });
-  api.commands.register({ id: "pick", title: "Terrain from Image into Area\u2026", enabled, run: () => {
+  api.commands.register({ id: "open", title: msg("Terrain from Image\u2026"), enabled, run: () => open(api.selection.markedArea()) });
+  api.commands.register({ id: "pick", title: msg("Terrain from Image into Area\u2026"), enabled, run: () => {
     void pickThenOpen(api.selection.markedArea());
   } });
-  api.menu.add("File/Import", { label: "Terrain from Image\u2026", enabled, command: "open" });
+  api.menu.add("File/Import", { label: msg("Terrain from Image\u2026"), enabled, command: "open" });
   for (const surface of ["terrainPalette", "viewport"]) {
     const visible = surface === "viewport" ? (ctx) => ctx.layer === "terrain" || ctx.layer === "clipboard" : void 0;
     api.contextMenu.add(surface, { label, visible, enabled, run: (ctx) => open(ctx.markedArea) });
-    api.contextMenu.add(surface, { label: "Terrain from Image into Area\u2026", visible, enabled, command: "pick" });
+    api.contextMenu.add(surface, { label: msg("Terrain from Image into Area\u2026"), visible, enabled, command: "pick" });
   }
 }
 export {
