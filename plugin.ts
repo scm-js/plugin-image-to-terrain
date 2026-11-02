@@ -1,6 +1,6 @@
 /**
  * Terrain from Image — a plugin for the scmJS map editor, and the worked example for
- * its plugin API (https://github.com/jeany55/scm-js/blob/main/docs/plugins.md).
+ * its plugin API (https://github.com/scm-js/scm-js/blob/main/docs/plugins.md).
  *
  * File ▸ Import ▸ Terrain from Image… opens a dialog; the terrain palette's and the map's
  * context menus add *Terrain from Image into Area…*, which first lets you drag the target
