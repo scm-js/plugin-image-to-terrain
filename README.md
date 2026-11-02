@@ -1,55 +1,60 @@
 # Terrain from Image
 
 A plugin for [scmJS](https://github.com/scm-js/scm-js), the browser-based StarCraft 1 /
-Brood War map editor: it paints a picture onto the map.
-
-Bring an image in (a file, Ctrl+V, a drop, or a URL), say where on the map it goes and how it
-fits, tune it (auto-levels, brightness, contrast, gamma, saturation, hue, invert, blur), then
-give each terrain a **key colour** — pick one straight out of the picture with the eyedropper —
-and every cell becomes the terrain whose key colour is nearest. Apply is a single undo step.
-
-The default match is isometric: the plugin paints lattice diamonds with the editor's ISOM brush,
-low ground first and rare terrains last, so **cliffs and shores are generated** at the
-boundaries rather than drawn. On a map with no `ISOM` section (or if you ask for tiles) it
-stamps flat tile pairs instead.
+Brood War map editor. It paints a picture onto the map as terrain.
 
 ## Install
 
-In scmJS: **Plugins ▸ Manage Plugins…**, paste
+Terrain from Image comes with the editor and is on by default. If you turned it off, tick
+it on again in Plugins ▸ **Manage Plugins…**.
+
+To add it by hand, open Plugins ▸ **Manage Plugins…**, paste
 
 ```
 https://github.com/scm-js/plugin-image-to-terrain
 ```
 
-and press **Add**. It ships enabled by default, so it is normally already in that list — the
-editor fetches it from here on startup.
-
-To pin a version, add a ref: `github:scm-js/plugin-image-to-terrain@v1.0.0`.
+and press **Add**. To pin a version, add a tag: `github:scm-js/plugin-image-to-terrain@v1.1.0`.
 
 ## Use
 
-- **File ▸ Import ▸ Terrain from Image…** — opens the dialog on the whole map.
-- **Terrain from Image into Area…** — in the map's and the terrain palette's context menus;
-  drag the target rectangle on the map first, then the dialog opens with it selected.
+Open the dialog in one of these ways:
 
-Each terrain in the list is shown with its own tile art, so what you are matching against
-is what the map will look like. Settings and the per-tileset key colours are remembered
-between sessions.
+- File ▸ Import ▸ **Terrain from Image…** works on the whole map, or on the marked area if
+  there is one.
+- **Terrain from Image…** in the context menu of the map or the terrain palette does the
+  same. With an area marked it reads **Terrain from Image into Marked Area…**.
+- **Terrain from Image into Area…** in the same context menus asks you to drag the target
+  rectangle on the map first.
 
-## Layout
+In the dialog:
 
-| | |
+1. Bring in a picture: choose a file, paste it with Ctrl+V, drop it on the dialog, or load
+   it from a URL.
+2. Say where on the map it goes and how it fits (fill, letterbox or stretch).
+3. Adjust it if you need to. There are sliders for brightness, contrast, saturation, hue
+   and gamma, and checkboxes for auto-levels and invert.
+4. Choose the terrains to use and give each a key colour. You can pick one out of the
+   picture with the eyedropper. Each terrain in the list is shown with its own tile art.
+5. Press **Apply**. Every cell becomes the terrain whose key colour is nearest, and the
+   whole change is one undo step.
+
+By default the plugin paints with the editor's isometric brush, low ground first and rare
+terrains last. Cliffs and shores are generated at the boundaries. On a map with no `ISOM`
+section, or if you choose **Flat tiles**, it stamps flat tile pairs instead.
+
+Your settings, and the key colours for each tileset, are remembered between sessions.
+
+## Files
+
+| File | What it is |
 | --- | --- |
-| `plugin.json` | the manifest the editor reads (name, version, `entry`, `icon`, the API version it needs) |
-| `plugin.ts` | `activate(api)`: the dialog, the image sources, the eyedropper, the transaction |
-| `convert.ts` | the pure part — colour adjustment, OKLab matching, majority filter, region cleanup, fit |
-| `dist/plugin.js` | the bundle the editor loads; `npm run build` writes it, CI commits it |
-| `tests/` | vitest over `convert.ts` |
-| `.github/` | the repository's social preview card and the scm-js organisation avatar (both uploaded by hand — GitHub has no API for either) |
-
-Types come from [`@scm-js/plugin-api`](https://github.com/scm-js/plugin-api), a devDependency
-generated from the editor's own `src/plugins/api.ts`; `npm update @scm-js/plugin-api` takes the
-newest contract.
+| `plugin.json` | The manifest the editor reads. |
+| `plugin.ts` | The dialog, the image sources, the eyedropper and the edit to the map. |
+| `convert.ts` | The image processing: colour adjustment, matching in OKLab, clean-up and fit. |
+| `ko.ts` | The Korean for the words the plugin shows. |
+| `dist/plugin.js` | The bundle the editor loads. `npm run build` writes it and CI commits it. |
+| `tests/` | Tests of `convert.ts`, and a check that `ko.ts` is complete. |
 
 ## Development
 
@@ -57,19 +62,19 @@ newest contract.
 npm install
 npm run typecheck
 npm test
+npm run dev
 ```
 
-`dist/plugin.js` is what the editor loads (`build` in the manifest): `npm run build` writes
-it with esbuild, and CI commits it on every push to `main` and checks at a tag that it is
-what the source builds to. Run `npm run dev` while you work so the bundle follows your
-edits. To try local changes, serve this directory (`npx serve .`) and add
-`http://localhost:3000/` in Manage Plugins, then use **Reload** after each edit.
+`npm run dev` rebuilds `dist/plugin.js` on every change. To try your changes in the editor,
+serve this folder with `npx serve --cors .`, add `http://localhost:3000/` in Plugins ▸
+**Manage Plugins…**, and press **Reload** on the plugin's row after each edit.
+
+The types come from [`@scm-js/plugin-api`](https://github.com/scm-js/plugin-api). Run
+`npm update @scm-js/plugin-api` for the newest. The
+[plugin guide](https://docs.scmjs.dev/plugins/writing-a-plugin/) covers the rest.
 
 A plugin runs with the editor's own privileges. There is no sandbox.
 
-See [`docs/plugins.md`](https://github.com/scm-js/scm-js/blob/main/docs/plugins.md) in the editor
-for the API tour.
-
 ## Licence
 
-MIT — see [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE).
